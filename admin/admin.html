@@ -4,7 +4,7 @@
 <head>
   <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <script src="/config.js"></script>
+ <script src="../config.js"></script>
   <title>School Admin</title>
 <style>
   * {
@@ -281,10 +281,44 @@ z-index: 102;
       </div>
       
     <div class="card monSA">
-      <h2>Student Attendace</h2>
+      <h2>Student Attendance</h2>
       <a href="stdAttendance.html">Monitor Student Attendance</a>
     </div>
       
+     <div class="card classCenter">
+      <h2>Student Center</h2>
+      <a href="student/index.html">Manage Student</a>
+    </div>
+     <div class="card classCenter">
+      <h2>Class Center</h2>
+      <a href="class/index.html">Manage Class</a>
+    </div>
+      <div class="card classCenter">
+      <h2>Section Center</h2>
+      <a href="#">Manage Section</a>
+    </div>
+     <div class="card classCenter">
+      <h2>Staff Center</h2>
+      <a href="#">Manage both Academic and Non-Academic Staff</a>
+    </div>
+      
+   <div class="card classCenter">
+      <h2>Parent/Guardian</h2>
+      <a href="#">Manage Parent</a>
+    </div>
+      
+      <div class="card classCenter">
+      <h2>Communication Center</h2>
+      <a href="#">Communicate with parents and or staff seamlessly</a>
+    </div>
+      
+    <div class="card classCenter">
+      <h2>School Fees</h2>
+      <a href="#">View and record School Fees Entries</a>
+    </div>
+      
+      
+     
        
       
     
@@ -380,9 +414,7 @@ signout1.innerHTML = schoolName.toUpperCase();
     sess.innerHTML = sessions[0].year + ", " +terms[sessions[0].term]
         }
   
-  let teachersDoc = await getDoc(doc(db, schoolId, "teachers"));
-    
-
+ 
 
 const adminFunctions = [
     "teachers",
@@ -398,11 +430,17 @@ const adminFunctions = [
     "monSA"
   ];
   
+    
+    
 adminFunctions.forEach(fx=>{
   let elm = document.querySelector("."+fx);
   if (elm) elm.style = "display: none;"
   
 })
+    
+  let teachersDoc = await getDoc(doc(db, schoolId, "teachers"));
+    
+
   let d = new Date();
   let year = d.getFullYear();
   let month = d.getMonth() + 1;
