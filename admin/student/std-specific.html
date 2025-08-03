@@ -138,6 +138,26 @@
         gap: 0.3rem;
       }
     }
+  .fee-status {
+    box-sizing: border-box;
+    padding-left: 12px;
+    border-left: 4px solid #007bff;;
+  }
+  .button-primary {
+  background-color: indianred; //coral; //#007bff;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.button-primary:hover {
+  background-color: #0056b3;
+}
   </style>
 </head>
 <body>
@@ -164,12 +184,14 @@
         </div>
       </div>
 
-      <div class="section">
+      <div class="section school-fee">
         <h3>School Fees</h3>
         <div class="fee-status">
           <div>Status: <span id="fee-status" class="status paid">Undefined</span></div>
           <div><a id="payment-history-link" href="#">View History of School Fees</a></div>
+          <button class="button-primary">Record</button>
         </div>
+        
       </div>
     </div>
   </div>
