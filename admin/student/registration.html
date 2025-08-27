@@ -74,10 +74,10 @@
     .top img {
       width: 130px;
       height: 130px;
-      border-radius: 50%;
+      border-radius: 15px;
       object-fit: cover;
       margin-bottom: 1rem;
-      //border: 4px solid var(--primary);
+     // border: 4px solid var(--primary);
     }
 
     .upload-img {
@@ -113,7 +113,7 @@
       text-align: center;
     }
 
-    .submit-btn button {
+    .submit-btn button, button {
       background-color: var(--primary);
       color: white;
       padding: 0.75rem 2rem;
@@ -199,7 +199,7 @@
           <option value="">Select</option>
           <option>Male</option>
           <option>Female</option>
-          <option>Other</option>
+          
         </select>
       </div>
 
@@ -207,6 +207,35 @@
         <label for="dob">Date of Birth</label>
         <input type="date" id="dob" name="dob" required>
       </div>
+      
+      <div class="form-group">
+        <label for="pob">Place of Birth</label>
+        <input  id="pob" name="pob" required>
+      </div>
+      
+      
+      
+        <div class="form-group">
+        <label for="nationality">Nationality</label>
+        <select type="date" id="nationality" name="nationality" required>
+          <option value="">-nationality-</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="state">State</label>
+        <select id="state" name="state" required>
+          <option value="">-state-</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="lga">LGA</label>
+        <select id="lga" name="lga" required>
+          <option value="">-LGA-</option>
+        </select>
+      </div>
+      
+      
 
       <div class="form-group">
         <label for="std-status">Status</label>
@@ -224,22 +253,14 @@
       <div class="form-group">
         <label for="class">Class</label>
         <select id="class" name="class" required>
-          <option value="">Select Class</option>
-          <!--option>JSS1</option>
-          <option>JSS2</option>
-          <option>JSS3</option>
-          <option>SS1 Science</option>
-          <option>SS1 Commercial</option>
-          <option>SS1 Art</option>
-          <option>SS2 Science</option>
-          <option>SS2 Commercial</option>
-          <option>SS2 Art</option>
-          <option>SS3 Science</option>
-          <option>SS3 Commercial</option>
-          <option>SS3 Art</option-->
+          <option value="">Select Class</option>          
         </select>
       </div>
+      
 
+      
+        
+      
       <div class="submit-btn">
         <button type="submit">Register</button>
       </div>
@@ -249,6 +270,7 @@
   <div class="loader">
   <div class="ripple"></div>
 </div>
+  <script src="lga.js"></script>
 <script type="module">
   /*
   precondition: session must be already created;
@@ -282,6 +304,14 @@
   let sessionsDoc = await getDoc(sessionsRef);
   document.querySelector(".loader").style.display = "none";
  
+  fetchAllCountries(nationality);
+  nationality.value = "Nigeria";
+  nationality.onchange = _=>{
+    let v = nationality.value;
+    if (v){
+      getStates(v, state);
+    }
+  }
   if (sessionsDoc.exists()){
     let sessions =  sessionsDoc.data().sessions;
      sessions= sessions.sort((a, b)=>b.no - a.no);
@@ -301,13 +331,23 @@
       //sessionSelect.firstChild.nextElementSibling.selected = true;
   }
   
-  
-  
+ let registrant  = localStorage.getItem("registrant");
+   localStorage.clear("registrant");
+const elm = (id)=>document.getElementById(id);
+  console.log(registrant);
+ if (registrant){
+   registrant = JSON.parse(registrant);
+   assert(!registrant.registered, "Registrant already registered!");
+   elm("name").value = registrant.name;
+  // elm("gender").innerHTML = `<option>${registrant.gender}</option>`;
+
+ }
   let sectionRef = doc(db, schoolId, "section");
-  let sections = await getDoc(sectionRef);
-var timeoutId;
+  var timeoutId;
+  let classSelect = document.getElementById("class");
+  if (!registrant){
+    let sections = await getDoc(sectionRef);
   if (sections.exists()){
-    let classSelect = document.getElementById("class");
     let sectData = sections.data();
     for (const sectId in sectData){
       let section = sectData[sectId];
@@ -318,6 +358,9 @@ var timeoutId;
         classSelect.append(opt);
       })
     }
+  }
+  } else {
+    classSelect.innerHTML = `<option>${registrant.class}</option>`;
   }
     // Image preview
     document.getElementById("profilePicInput").addEventListener("change", function () {
@@ -344,7 +387,7 @@ var timeoutId;
       const dob = document.getElementById("dob").value;
       const status = document.getElementById("std-status").value;
       const studentClass = document.getElementById("class").value;
-
+    
   /*    alert(
         "New Student Registered:\n\n" +
         "Name: " + name + "\n" +
@@ -364,6 +407,7 @@ var timeoutId;
     }
     stdProfile.class = studentClass.toLowerCase();
     stdProfile.names = names;
+    stdProfile.asApplicant = registrant;
     console.log(names);
     runTransaction(db, async (transaction)=>{
       let sesK = key(session.dataset.year+terms[session.dataset.term]);
@@ -390,7 +434,14 @@ var timeoutId;
       }
       console.log(stdProfile.registra)
       let studentRef = doc(db, schoolId, "db", "students",  key(newId));
+      let ref = doc(db, schoolId, "db", "applications", `year${session.year}term${session.term}`);
+      
+      let formData = new FormData(this);
+      formData.forEach((v, k)=>stdProfile[k]=v);
+      console.log(JSON.stringify(formData))
      await transaction.set(studentRef, stdProfile);
+      //let ref = doc(db, schoolId, "db", "applications", `year${session.year}term${session.term}`);
+
      let st= document.getElementById("status");
       clearTimeout(timeoutId);
       st.innerText = "A new student with id "+newId+" has been successfully created";
@@ -457,7 +508,94 @@ var timeoutId;
   function key(token){
       return token.replaceAll(" ","").replaceAll("/", "").replaceAll(",", "").trim();
     }
+function assert(condition, message) {
+  if (!condition) {
+    alert(message);
+    throw new Error(message || "Assertion failed");
+  }
+}
 
+  function fetchAllCountries(select){
+       // Fetch all countries
+    fetch("https://countriesnow.space/api/v0.1/countries")
+      .then(res => res.json())
+      .then(data => {
+        select.innerHTML = `<option value="">-- Select a Country --</option>`;
+        data.data.forEach(country => {
+          const option = document.createElement("option");
+          option.value = country.country;
+          if (country.country == "Nigeria"){
+             option.selected = true;
+            getStates("Nigeria", state);
+          }
+          option.textContent = country.country;
+          select.appendChild(option);
+        });
+      });
+
+  }
+  
+  
+      // Fetch states for selected country
+    function getStates(country, stateSelect) {
+      stateSelect.innerHTML = "<option value=''>None</option>";
+      console.log(country);
+      const selectedCountry = country;  // countrySelect.value;
+      if (!selectedCountry) {
+        alert("Please select a country.");
+        return;
+      }
+      
+      fetch("https://countriesnow.space/api/v0.1/countries/states", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ country: selectedCountry })
+      })
+      .then(res => res.json())
+      .then(data => {
+        const states = data.data.states;
+        if (states.length === 0) {
+          stateSelect.innerHTML = "<option>N/A</option>";
+          return;
+        }
+
+        const list = states.forEach(s => {
+          let opt = new Option(s.name);
+          stateSelect.append(opt);
+        });
+        lga.innerHTML = "";
+        if (selectedCountry=="Nigeria"){
+          
+        stateSelect.onchange = e=>{
+          if (stateSelect.value){
+            lga.innerHTML = "";
+            let s = stateSelect.value;
+            console.log(lgas);
+            console.log(s);
+            console.log(Object.keys(lgas))
+            let ls = lgas[s.replace(" State", "")];
+            
+            console.log(ls);
+            ls.forEach(lg=>{
+              let opt = new Option(lg);
+              lga.append(opt);
+            })
+          }
+        }
+      }
+
+       // stateContainer.innerHTML = `<h3>States in ${selectedCountry}:</h3><ul>${list}</ul>`;
+      })
+     /* .catch(err => {
+        console.error(err);
+        //stateContainer.innerHTML = "<strong>Error fetching states.</strong>";
+      });*/
+    }
+
+//assert(5 > 2, "This should pass ✅");
+//assert(2 > 5, "This should fail ❌"); // Throws Error
   </script>
 
 </body>
