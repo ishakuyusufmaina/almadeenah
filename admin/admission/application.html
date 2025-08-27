@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="application.css">
+  <title>APPLICATION</title>
+  <style>
+  
+  </style>
+</head>
+<body>
+  <h1>
+    APPLICANTS
+  </h1>
+ <select id="sessionSelect">
+   
+  </select>
+  <!--4select>
+    <option> -select term- </option>
+    <option>1<sup>st</sup> term</option>
+    <option>2<sup>nd</sup> term</option>
+    <option>3<sup>rd</sup> term</option>
+  </select-->
+
+  <!--a href="#">View all</a-->
+  
+  <table>
+    <tr>
+      <th>A/N</th>
+      <th>Name</th>
+      <th>Class</th>
+      <th>House</th>
+      <th>Action</th>
+    </tr>
+      <tbody id="table">
+          
+      </tbody>
+  </table>
+ 
+
+  <button id="add">Add</button>
+  <button id="saveBtn">Save</button>
+
+
+    <!--button id="printBtn">download</button-->
+  <script src="config.js"></script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
+  import {getFirestore, doc, query, where, setDoc, getDoc} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+  import {getAuth, signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+     // import {getDatabase, set, ref, onValue, child, get } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+    
+    
+    const schoolId = "almadeenah";
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const auth = getAuth(app);
+    const db = getFirestore(app);
+    
+        
+    const terms = ["first term", "second term", "third term"];
+
+    let sectionRef = doc(db, schoolId, "section");
+  var classes = [];
+  const houses = ["Red", "Green", "Blue", "Yellow"]; 
+let sectionDoc = await getDoc(sectionRef);
+let sections;
+ if (sectionDoc.exists()){
+   sections = sectionDoc.data();
+   //let keys = Object.keys(sections);
+   /*keys.forEach(key=>{
+     let cls = sections[key].classes;
+     classes = classes.concat(cls);
+     console.log(classes);
+   });*/
+
+ }
+  
+  
+  let sessionsRef = doc(db, schoolId, "sessions");
+  //let studentsRef = doc(db, schoolId, "classes");
+  let sessionsDoc = await getDoc(sessionsRef);
+  if (sessionsDoc.exists()){
+    let sessions =  sessionsDoc.data().sessions;
+     sessions= sessions.sort((a, b)=>b.no - a.no);
+    sessions.forEach((session, i)=>{
+        let year = session.year;
+      let opt = document.createElement("option");
+      opt.innerHTML = year + ", " + terms[session.term];
+      opt.dataset.year = year.replace("/", "_");
+      opt.dataset.term = session.term;
+      sessionSelect.appendChild(opt);
+      opt.value = i;
+        if (i==0)
+        opt.selected = true;
+    });
+    
+    console.log(JSON.stringify(sessions[0]));
+    loadAppsBySession(sessions, 0);
+    sessionSelect.onchange = _=>{
+      if (_.target.value) {
+        loadAppsBySession(sessions, _.target.value);
+        saveBtn.disabled = true;
+      }
+      else {
+        table.innerHTML = "";
+        saveBtn.disabled = false;
+      }
+    }
+    //loadApps({term:sessions[0].term, year:sessions[0].year.replace("/", "_")});
+      //sessionSelect.firstChild.nextElementSibling.selected = true;
+  }
+  
+  function loadAppsBySession(sessions, i){
+    loadApps({term:sessions[i].term, year:sessions[i].year.replace("/", "_")});
+  }
+  
+  
+
+  
+  
+
+  
+  
+
+  async function loadApps(session){
+ 
+    console.log(session);
+    console.log(`school${schoolId}year${session.year}term${session.term}`);
+
+    let ref = doc(db, schoolId, "db", "applications", `year${session.year}term${session.term}`);
+  //  let q = query(ref, where();
+    if (session){
+      //let q = query(collection(db, schoolId, "db", "applications"), where("year", "==", session.year), where("term", session.term));
+      
+      let appDoc = await getDoc(ref);
+      let apps;
+      if (appDoc.exists()) apps = appDoc.data();
+      else apps = {
+        applicants : [],
+        year: session.year,
+        term: session.term
+      }
+      renderApplications(apps);
+      add.onclick = _=> {
+        let lastAN = apps.applicants.length;
+        lastAN++;
+        let newApp = {
+          an: lastAN,
+          name: "",
+          class: "",
+          house: ""
+        }
+        apps.applicants.push(newApp);
+        renderApplications(apps);
+      }
+      saveBtn.onclick = async e=>{
+        if (!apps) return;
+        
+        if (!Object.values(apps).length) return;
+        await setDoc(ref, apps);
+        alert("Saved!");
+      }
+ 
+      function renderApplications(apps){
+  table.innerHTML = "";
+  apps.applicants.forEach(app => {
+    let row = table.insertRow();
+
+    // A/N
+    let anCell = row.insertCell();
+    anCell.innerText = app.an;
+    anCell.setAttribute("data-label", "A/N");
+    anCell.className = "an";
+
+    // Name
+    let nameCell = row.insertCell();
+    let nameInput = document.createElement("input");
+    nameCell.append(nameInput);
+    nameInput.value = app.name;
+    nameInput.oninput = _ => {
+            app.name = _.target.value;
+    }
+    nameCell.setAttribute("data-label", "Name");
+
+    // Class
+    let clsCell = row.insertCell();
+    clsCell.innerHTML = `<select><option value="">-select class-</option></select>`;
+    let clsSelect = clsCell.children[0];
+    clsSelect.onchange = _ => app.class = _.target.value;
+    Object.keys(sections)
+    .forEach(sect=>{
+      let optgroup = document.createElement("optgroup");
+      optgroup.label = sect.toUpperCase();
+      clsSelect.append(optgroup);
+      sections[sect]
+      .classes.forEach(cls=>{
+      let opt = new Option(cls);
+      opt.value = cls;
+      optgroup.append(opt);
+    });
+    })
+    if (app.class) clsSelect.value = app.class;
+    clsCell.setAttribute("data-label", "Class");
+
+    // House
+    let houseCell = row.insertCell();
+    houseCell.innerHTML = `<select><option value="">-select house-</option></select>`;
+    let houseSelect = houseCell.children[0];
+    houseSelect.onchange = _ => {
+      app.house = _.target.value;
+      houseSelect.style.background = app.house.toLowerCase();
+      houseSelect.style.color = getContrastingColor(app.house.toLowerCase());
+    };
+    houses.forEach(house=>{
+      let opt = new Option(house);
+      opt.value = house;
+      houseSelect.append(opt);
+    });
+    if (app.house) {
+      houseSelect.value = app.house;
+      houseSelect.style.background = app.house.toLowerCase();
+      houseSelect.style.color = getContrastingColor(app.house.toLowerCase());
+    }
+    houseCell.setAttribute("data-label", "House");
+
+    // Action
+    let statusCell = row.insertCell();
+    if (app.status) {
+      statusCell.innerHTML = app.status + ` by ${app.admittedBy}<br>
+      @${app.admissionTime} on ${app.admissionDate}
+      <a href="admission.html?an=${app.an}">Admission</a>
+      `
+    } else {
+      let admitBtn = document.createElement("button");
+      admitBtn.textContent = "Admit";
+      statusCell.append(admitBtn);
+      admitBtn.onclick = _=>{
+        app.status = "admitted";
+        app.admittedBy = auth.currentUser.displayName;
+        let dateTime = getCurrentDateTime();
+        app.admissionTime = dateTime.time;
+        app.admissionDate = dateTime.date;
+        _.target.textContent = app.status;
+        _.target.disabled = true;
+      }
+    }
+    statusCell.setAttribute("data-label", "Action");
+    if (app.status == "admitted"){
+       row.querySelectorAll("select, input")
+      .forEach(inp=>inp.disabled = true);
+    }
+  });
+}
+    }
+  }
+  
+  
+  
+    sessionSelect.onchange = async e=>{
+      table.innerHTML = "";
+      if (sessionSelect.value){
+        let i = sessionSelect.selectedIndex;
+        let selected = sessionSelect.children[i];
+        let session = {
+          year: selected.dataset.year,
+          term: selected.dataset.term
+        }
+        console.log(JSON.stringify(session));
+        loadApps(session);
+      }
+  }
+    
+ 
+  
+  function key(token){
+    return token.replaceAll(" ","").replaceAll("/", "").replaceAll(",", "").trim();
+  }
+ 
+
+  function getContrastingColor(bgColor) {
+  // Map named colors to RGB
+  const colors = {
+    red: [255, 0, 0],
+    green: [0, 128, 0],
+    blue: [0, 0, 255],
+    yellow: [255, 255, 0]
+  };
+
+  const rgb = colors[bgColor.toLowerCase()];
+  if (!rgb) throw new Error("Unsupported color");
+
+  // Formula for relative luminance
+  const [r, g, b] = rgb.map(c => {
+    c /= 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+
+  const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+
+  // Use white if dark background, black if light background
+  return luminance > 0.179 ? "black" : "white";
+}
+
+// Example usage:
+/*console.log(getContrastingTextColor("red"));    // white
+console.log(getContrastingTextColor("green"));  // white
+console.log(getContrastingTextColor("blue"));   // white
+console.log(getContrastingTextColor("yellow")); // black
+  */
+  
+  
+  function getCurrentDateTime() {
+  const now = new Date();
+
+  // Extract date parts
+  const day = String(now.getDate()).padStart(2, "0");
+  const month = String(now.getMonth() + 1).padStart(2, "0"); // Months are 0-based
+  const year = now.getFullYear();
+
+  // Extract time parts
+  let hours = now.getHours();
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  const ampm = hours >= 12 ? "PM" : "AM";
+
+  // Convert to 12-hour format
+  hours = hours % 12;
+  hours = hours ? hours : 12; // 0 becomes 12
+  const formattedHours = String(hours).padStart(2, "0");
+
+  return {
+    date: `${day}/${month}/${year}`,
+    time: `${formattedHours}:${minutes}:${seconds} ${ampm}`
+  };
+}
+  </script>
+</body>
+</html>
