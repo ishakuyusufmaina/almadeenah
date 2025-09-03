@@ -187,8 +187,8 @@
       <div class="form-group">
         <label for="gender">Gender</label>
         <select id="gender" name="gender" required>
-          <option>Male</option>
-          <option>Female</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
           <option>Other</option>
         </select>
       </div>
@@ -201,10 +201,12 @@
       <div class="form-group">
         <label for="status">Status</label>
         <select id="status" name="status" required>
-          <option>Active</option>
-          <option>Graduated</option>
-          <option>Suspended</option>
-          <option>Dismissed</option>
+          <option value="active">Active</option>
+          <option value="graduated">Graduated</option>
+          <option value="transferred">Transferred</option>
+          <option value="graduated">Defaulter</option>
+          <option value="suspended">Suspended</option>
+          <option value="dismissed">Dismissed</option>
         </select>
       </div>
 
@@ -251,7 +253,7 @@
 };
   
   
-  const schoolId="almadeenah";
+  const schoolId="capital";
       const app = initializeApp(firebaseConfig);
       const analytics = getAnalytics(app);
       const auth = getAuth(app);
@@ -263,10 +265,10 @@
   document.querySelector(".loader").style.display = "none";
  
   student = stdDoc.data();
-    document.getElementById("name").value = student.name.toUpperCase();
+    document.getElementById("name").value = student.name.toUpperCase().trim();
     document.getElementById("gender").value = student.gender;
     document.getElementById("dob").value = student.dob;
-     document.getElementById("status").value = student.status;
+     document.getElementById("status").value = student.status ?? "active";;
   document.getElementById("id").value = student.id;
   document.getElementById("pic").src = student.picURL;
   document.getElementById("class").value = student.class.toUpperCase();

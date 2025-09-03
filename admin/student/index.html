@@ -240,7 +240,7 @@
     */
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
-  import {getFirestore, query, where, getDocs, collection, doc, setDoc, getDoc, runTransaction} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+  import {getFirestore, query, limit, where, getDocs, collection, doc, setDoc, getDoc, runTransaction} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
   import {getAuth, signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
      // import {getDatabase, set, ref, onValue, child, get } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
       const firebaseConfig = {
@@ -254,7 +254,7 @@
 };
   
   
- const schoolId="almadeenah";
+  const schoolId="capital";
       const app = initializeApp(firebaseConfig);
       const analytics = getAnalytics(app);
       const auth = getAuth(app);
@@ -289,11 +289,18 @@
   //    let studentRef = doc(db, schoolId, "db", "students");
       searchBtn.classList.add("loading");
       let q;
-      
+      let constraint = [];
       if (queryType=="names"){
         let arr = queryValue.split(" ");
-        console.log(typeof arr);
-        q = query(collection(db, schoolId, "db", "students"), where("names", "array-contains-any", arr));
+        let newArr = [[arr[0]]];
+        arr.forEach((name, i)=>{
+          if (i) newArr.push(newArr[i-1].concat(name));
+          constraint.push(where("names", "array-contains-any", [name]));
+
+        })
+        newArr = newArr.reverse();
+        console.log(newArr);
+        q = query(collection(db, schoolId, "db", "students"), where("names", "array-contains-any", ...newArr));
       } else {
         console.log(queryType);
         console.log(queryValue);
