@@ -191,7 +191,10 @@
 //const schoolId= "alhidayah";
   const terms = ["first term", "second term", "third term"];
 
-  
+ // let p = (await getDoc(doc(db, schoolId, "db", "parents", "pin10"))).data();
+//  console.log(JSON.stringify(p));
+//  await setDoc(doc(db, schoolId, "db", "parents", "pin1"), p)
+//  alert("Done");
     document.getElementById("infoForm").addEventListener("submit", async function(e) {
       e.preventDefault(); // prevent reload
 
@@ -202,12 +205,12 @@
         let colRef = collection(db, schoolId, "db", "parents");
         let snapshot = await getCountFromServer(colRef);
         let count = snapshot.data().count;
-        data.id = count+1;
+        data.id = Number(count)+1;
         let newPRef = doc(db, schoolId, "db", "parents", "pin"+data.id);       
         let newPDoc = await transaction.get(newPRef);
         if (newPDoc.exists()){
-          alert("Problem!");
-          throw "Parent created before created"
+          alert("Parent: possible inconsistent parent ID!");
+          throw "Parent created before created"          
         }
         data.timestamp = serverTimestamp();
         await transaction.set(newPRef, data);
