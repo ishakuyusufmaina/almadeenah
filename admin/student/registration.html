@@ -517,7 +517,7 @@ const elm = (id)=>document.getElementById(id);
       
       let lastStudentId = Number(lastId)+1;
      await transaction.set(sessionRef, {lastStudentId}, {merge:true});
-     let newId = `${session.dataset.year}/0${session.dataset.term}/${lastStudentId}`.replaceAll(" ", "");
+     let newId = `${session.dataset.year}/0${Number(session.dataset.term)+1}/${lastStudentId}`.replaceAll(" ", "");
      stdProfile.id = newId;
   //   stdProfile.dateCreated = 
       stdProfile.registra = {
