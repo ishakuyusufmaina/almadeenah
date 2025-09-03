@@ -3,179 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="reg.css">
   <title>New Student Registration</title>
+  
   <style>
-    :root {
-      --primary: #2563eb;
-      --background: #f3f4f6;
-      --text: #1f2937;
-      --border: #d1d5db;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      padding: 2rem;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: var(--background);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      
-    }
-  #session {
-    position: absolute;
-    top: 0;
-  }
-  #status {
-    position: fixed;
-    background: white;
-  padding: 2rem;
-  border-radius: 1.5rem;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-  max-width: 320px;
-  width: 90%;
-  text-align: center;
-  font-family: "Segoe UI", sans-serif;
-  animation: fadeInScale 0.3s ease-in-out;
-    left: 20px;
-    top: 20px;
     
-    
-  }
   
-  :empty#status {
-  display: none;
-}
 
-    .card {
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      max-width: 700px;
-      width: 100%;
-      overflow: hidden;
-      padding: 2rem;
-    }
 
-    .top {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
 
-    .top img {
-      width: 130px;
-      height: 130px;
-      border-radius: 15px;
-      object-fit: cover;
-      margin-bottom: 1rem;
-     // border: 4px solid var(--primary);
-    }
 
-    .upload-img {
-      margin-bottom: 1rem;
-    }
 
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .form-group label {
-      font-weight: bold;
-      margin-bottom: 0.4rem;
-    }
-
-    .form-group input,
-    .form-group select {
-      padding: 0.5rem;
-      border: 1px solid var(--border);
-      border-radius: 0.4rem;
-      font-size: 1rem;
-    }
-
-    .submit-btn {
-      margin-top: 1.5rem;
-      text-align: center;
-    }
-
-    .submit-btn button, button {
-      background-color: var(--primary);
-      color: white;
-      padding: 0.75rem 2rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 0.5rem;
-      cursor: pointer;
-    }
-
-    @media (max-width: 600px) {
-      .card {
-        padding: 1.5rem;
-      }
-    }
   
   
-  
-.loader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-  backdrop-filter: blur(6px);
-  background-color: rgba(255, 255, 255, 0.5);
-}
 
-.ripple {
-  position: relative;
-  width: 80px;
-  height: 80px;
-}
-
-.ripple::before,
-.ripple::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: 4px solid #007bff;
-  border-radius: 50%;
-  animation: rippleAnim 1.5s infinite;
-}
-
-.ripple::after {
-  animation-delay: 0.75s;
-}
-
-@keyframes rippleAnim {
-  0% {
-    transform: scale(0.5);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(2);
-    opacity: 0;
-  }
-}
   </style>
 </head>
 <body>
@@ -257,10 +98,18 @@
         </select>
       </div>
       
+      <div class="form-group">
+        <label for="pin">PIN (<small>Parent Identification Number</small>)</label>
+        <input id="pin" type="number" required>
+        <button type="button" id="newParent">New parent? Register</button>
+        <div id="parent">
+          <button id="linkParent" type="button">Check</button>        
+        </div>
+      </div>
 
       
         
-      
+      <hr>
       <div class="submit-btn">
         <button type="submit">Register</button>
       </div>
@@ -270,6 +119,11 @@
   <div class="loader">
   <div class="ripple"></div>
 </div>
+  
+  <div class="iframe-container">
+    
+  </div>    
+
   <script src="lga.js"></script>
 <script type="module">
   /*
@@ -297,6 +151,48 @@
       const auth = getAuth(app);
     const db = getFirestore(app);
 
+  linkParent.onclick = async e=>{
+    parent = linkParent.parentElement;
+    let p = pin.value;
+    console.log(p);
+    
+    let info = document.createElement("div");
+    if (parent.children[1]) parent.children[1].remove();
+info.innerHTML = "Checking...";
+    let parentDoc;
+    try {
+    parentDoc = await getDoc(doc(db, schoolId, "db", "parents", "pin"+p.trim()));
+    } catch(e){
+      info.innerHTML = "Error occured. try again.";
+    }
+       parent.append(info);
+    if (parentDoc.exists()){
+      let par = parentDoc.data();
+      info.innerHTML = `
+      Parent Name: ${par.fullname}<br>
+      Parent ID: ${par.id}
+      `;
+      
+    } else {
+      info.innerHTML = "No such parent found";
+    }
+    
+  }
+  newParent.onclick = e=>{
+   let elm =  document.
+    querySelector(".iframe-container");
+    elm.innerHTML = `
+    <button id="close">Close</button>
+    <iframe src="../parent/registration.html"></iframe>
+    `;
+    elm.classList.add("show");
+    elm.querySelector("#close")
+    .onclick = e=> {
+      elm.innerHTML = "";
+      elm.classList.remove("show");
+      newParent.scrollIntoView();
+    }
+  }
     
     const terms = ["first term", "second term", "third term"];
   let sessionsRef = doc(db, schoolId, "sessions");
@@ -408,7 +304,8 @@ const elm = (id)=>document.getElementById(id);
     stdProfile.class = studentClass.toLowerCase();
     stdProfile.names = names;
     stdProfile.asApplicant = registrant;
-    console.log(names);
+    stdProfile.pin = document.getElementById("pin").value;
+    console.log(JSON.stringify(stdProfile));
     runTransaction(db, async (transaction)=>{
       let sesK = key(session.dataset.year+terms[session.dataset.term]);
       console.log(sesK);
