@@ -344,7 +344,7 @@
   */
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
-  import {getFirestore, doc, setDoc, getDoc, runTransaction} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+  import {getFirestore, doc, serverTimestamp, setDoc, getDoc, runTransaction} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
   import {getAuth, signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
      // import {getDatabase, set, ref, onValue, child, get } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
       const firebaseConfig = {
@@ -514,7 +514,7 @@ const elm = (id)=>document.getElementById(id);
     console.log(names);
     let stdProfile = {
       name, gender, dob, status,
-      picURL, house
+      picURL, house, timestamp:serverTimestamp()
     }
     stdProfile.class = studentClass.toLowerCase();
     stdProfile.names = names;
@@ -537,7 +537,10 @@ const elm = (id)=>document.getElementById(id);
       
       let lastStudentId = Number(lastId)+1;
      await transaction.set(sessionRef, {lastStudentId}, {merge:true});
-     let newId = `${session.dataset.year}/0${Number(session.dataset.term)+1}/${lastStudentId}`.replaceAll(" ", "");
+      let years = session.dataset.year.trim().replaceAll(" ", "").split("/");
+      let y1 = years[0].slice(2, 4);
+      let y2 = years[1].slice(2, 4);
+     let newId = `${y1}/${y2}/0${Number(session.dataset.term)+1}/${lastStudentId}`.replaceAll(" ", "");
      stdProfile.id = newId;
   //   stdProfile.dateCreated = 
       stdProfile.registra = {
