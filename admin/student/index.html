@@ -348,8 +348,9 @@
     resultElm.innerHTML = `
       <img src="${student.picURL}" alt="Picture of ${student.name}" class="studentPic">
       <div class="studentInfo">
+        <div class="studentId">${student.id.toUpperCase()}</div>
         <div class="studentName">${student.name.toUpperCase()}</div>
-        <div class="studentClass">${student.class.toUpperCase()}</div>
+        <div class="studentClass">${student.classes?? student.class}</div>
         <div class="studentClass">School Fee: ${student.feeStatus}</div>
 
       </div>
