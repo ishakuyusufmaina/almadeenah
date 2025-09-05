@@ -453,7 +453,7 @@ const elm = (id)=>document.getElementById(id);
  }
   let sectionRef = doc(db, schoolId, "section");
   var timeoutId;
-  let classSelect = document.getElementById("class");
+  let classSelect = document.getElementById("classes");
   if (!registrant){
     let sections = await getDoc(sectionRef);
   if (sections.exists()){
@@ -461,15 +461,18 @@ const elm = (id)=>document.getElementById(id);
     for (const sectId in sectData){
       let section = sectData[sectId];
       let classes = section.classes;
+      let classGroup = document.createElement("optgroup");
+      classGroup.label = sectId.toUpperCase();
+      classSelect.append(classGroup);
       classes.forEach(cls=>{
         let opt = new Option(cls);
         //console.log(classSelect);
-        classSelect.append(opt);
+        classGroup.append(opt);
       })
     }
   }
   } else {
-    classSelect.innerHTML = `<option>${registrant.class}</option>`;
+    classSelect.innerHTML = `<option selected>${registrant.class}</option>`;
   }
     // Image preview
     document.getElementById("profilePicInput").addEventListener("change", function () {
