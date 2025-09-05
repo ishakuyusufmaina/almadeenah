@@ -287,9 +287,9 @@
       </div>
 
       <div class="form-group">
-        <label for="class">Class</label>
-        <select id="class" name="class" required>
-          <option value="">Select Class</option>          
+        <label for="classes">Classes</label>
+        <select id="classes" multiple name="classes" required>
+          <!--option value="">Select Class</option-->          
         </select>
       </div>
 
@@ -495,7 +495,7 @@ const elm = (id)=>document.getElementById(id);
       const gender = document.getElementById("gender").value;
       const dob = document.getElementById("dob").value;
       const status = document.getElementById("std-status").value;
-      const studentClass = document.getElementById("class").value;
+     // const studentClass = document.getElementById("classes").value;
       const house = document.getElementById("house").value;
 
     
@@ -516,7 +516,7 @@ const elm = (id)=>document.getElementById(id);
       name, gender, dob, status,
       picURL, house, timestamp:serverTimestamp()
     }
-    stdProfile.class = studentClass.toLowerCase();
+    //stdProfile.class = studentClass.toLowerCase();
     stdProfile.names = names;
     stdProfile.asApplicant = registrant;
     stdProfile.pin = document.getElementById("pin").value;
@@ -553,7 +553,8 @@ const elm = (id)=>document.getElementById(id);
       
       let formData = new FormData(this);
       formData.forEach((v, k)=>stdProfile[k]=v);
-      console.log(JSON.stringify(formData))
+      stdProfile.classes = formData.getAll("classes");
+      //console.log(JSON.stringify(formData))
      await transaction.set(studentRef, stdProfile);
       //let ref = doc(db, schoolId, "db", "applications", `year${session.year}term${session.term}`);
 
