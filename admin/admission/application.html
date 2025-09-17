@@ -28,7 +28,7 @@
   
   <table>
     <tr>
-      <th>A/N</th>
+      <th>Form No.</th>
       <th>Name</th>
       <th>Class</th>
       <th>House</th>
@@ -118,16 +118,9 @@ let sections;
     loadApps({term:sessions[i].term, year:sessions[i].year.replace("/", "_")});
   }
   
-  
-
-  
-  
-
-  
-  
+ 
 
   async function loadApps(session){
- 
     console.log(session);
     console.log(`school${schoolId}year${session.year}term${session.term}`);
 
@@ -152,7 +145,8 @@ let sections;
           an: lastAN,
           name: "",
           class: "",
-          house: ""
+          house: "",
+          pnumber: " "
         }
         apps.applicants.push(newApp);
         renderApplications(apps);
@@ -173,7 +167,7 @@ let sections;
     // A/N
     let anCell = row.insertCell();
     anCell.innerText = app.an;
-    anCell.setAttribute("data-label", "A/N");
+    anCell.setAttribute("data-label", "Form No.");
     anCell.className = "an";
 
     // Name
@@ -227,6 +221,14 @@ let sections;
     }
     houseCell.setAttribute("data-label", "House");
 
+    let nCell = row.insertCell();
+    nCell.innerText = app.pnumber;
+    nCell.setAttribute("data-label", "Phone No.");
+    nCell.innerHTML = "<input type='number'>";
+    let inp = nCell.children[0];
+    inp.value = app.pnumber;
+    inp.oninput = e=> app.pnumber = nCell.textContent.trim();
+
     // Action
     let statusCell = row.insertCell();
     if (app.status) {
@@ -253,7 +255,8 @@ let sections;
        row.querySelectorAll("select, input")
       .forEach(inp=>inp.disabled = true);
     }
-  });
+    
+     });
 }
     }
   }
