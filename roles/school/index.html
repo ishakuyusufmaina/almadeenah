@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="../../config.js"></script>
+  <link rel="stylesheet" href="styles/index.css">
+  <title>School Director</title>
+  
+  <style>
+  .v-menu {
+    line-height: 10px;
+    display: inline-flex;
+    position: absolute;
+    top: 4px;
+    right: 10px;
+    font-weight: bolder;
+    font-size: 24px;
+   // border: 1px solid black;
+    border-radius: 6px;
+   align-items: center;
+  justify-content: center;
+    transition: background 0.3s ease;
+cursor: pointer;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+
+    flex-direction: column;
+  }
+  .v-menu > span{
+    
+  }
+  
+  </style>
+</head>
+<body>
+  <header class="body-header">
+    <h1 id="school">
+      <span class="logo-container">
+        <img src="../../logo.png" />  
+      </span>        
+    </h1>
+    <div class="controls">
+       <button class="add" id="add">+</button>
+       <button data-target="main-menu" id="menu">&#9776;</button>
+    </div>
+    <div id="main-menu" class="menu-container">
+      <button id="close">X</button> MENU
+      <hr>
+      <ul>
+        <li class="submenu">
+          <h3>Admission</h3>
+          <ol>
+            <li>
+              <a href="../admissionv2/application.html">Applications</a>
+            </li>
+            <li>
+              <a href="../admissionv2/admission.html">Admissions</a>
+            </li>
+          </ol>
+        </li>
+        <li id="switch">Switch <span>Account</span></li>
+        <li id="signout">Logout <span id="username"></span></li>
+        <li>
+          <a href="../changePsw.html">Change password</a>
+        </li>
+      </ul>
+    </div>
+    
+    <div id="sess">session/term not initialized</div>
+    <hr>
+     
+    <!--nav id="index">
+      <ul>
+        <li class="active"><a href="#resHeader">Resources</a></li>
+        <li><a href="#rolesHeader">Roles</a></li>
+      </ul>
+    </nav-->
+</header>
+  
+  <h2>DIRECTOR</h2>
+<main id="main">
+  <div id="resourceContainer" class="card-container">    
+    <div class="card auth">
+      Authorization code: <span id="code"></span>
+      <button id="generate">Generate new</button>
+      <button id="save" style="display:none">Save</button>
+    </div>
+    <div class="card classCenter">
+      <h4>Teach and Signs</h4>
+      <div id="staff-menu" class="card menu-list">
+        <a class="info" href="#">About</a>
+        <a href="#">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+       <span data-target="#staff-menu" class="v-menu">•<br>•<br>•</span>
+       <a class="card" href="teachAndLog.html">Lessons Taught</a>    
+    </div>    
+    
+    <div class="card classCenter">
+      <h4>School Ontology</h4>
+      <div id="staff-menu" class="card menu-list">
+        <a class="info" href="#">About</a>
+        <a href="#">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+       <span data-target="#staff-menu" class="v-menu">•<br>•<br>•</span>
+       <a class="card" href="ontology/index.html">School Management</a>    
+    </div>    
+    <div class="card classCenter">
+      <h4>Staff Center</h4>
+      <div id="staff-menu" class="card menu-list">
+        <a class="info" href="#">About</a>
+        <a href="#">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+       <span data-target="#staff-menu" class="v-menu">•<br>•<br>•</span>
+       <a class="card" href="staff/index.html">Staff Management</a>    
+    </div>    
+    
+    <div class="card classCenter">
+      <h4>Students Center</h4>
+      <div id="staff-menu" class="card menu-list">
+        <a class="info" href="#">About</a>
+        <a href="#">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+       <span data-target="#staff-menu" class="v-menu">•<br>•<br>•</span>
+       <a class="card" href="studentv2/index.html">Students Management</a>    
+    </div>    
+    
+     <div class="card classCenter">
+      <h4>Bursary</h4>
+      <div id="bursery" class="card menu-list">
+        Make new school fees entry<br>
+        Retrieve all school fees paid
+        
+        <a class="info" href="#">About</a>
+        <a href="#">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+       <span data-target="#bursery" class="v-menu">•<br>•<br>•</span>
+       <a class="card" href="bursar/records.html">School Fees</a>    
+    </div>    
+ 
+    <div class="card ">
+      <div id="teachers-menu" class="card menu-list">
+        <a class="info" href="#">About</a>
+        <a href="#">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+      <h4>Teacher Center</h4>
+      <span data-target="#teachers-menu" class="v-menu">•<br>•<br>•</span>
+      <a class="card" href="teachers-center.html">Teachers Management</a>
+    </div>
+    
+    <div class="card classCenter">
+      <h4>Session</h4>
+      <div id="staff-menu" class="card menu-list">
+        <a class="info" href="#">About</a>
+        <a href="#">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+       <span data-target="#staff-menu" class="v-menu">•<br>•<br>•</span>
+       <a class="card" href="session.html">Current session/term update</a>
+    </div> 
+    
+    <div class="card classCenter">
+      <h4>Students Performance</h4>
+      <div id="staff-menu" class="card menu-list">
+        <a class="info" href="#">About</a>
+        <a href="#">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+       <span data-target="#staff-menu" class="v-menu">•<br>•<br>•</span>   
+      <a class="card" href="reportCards.html">Realtime Report Cards</a>    
+      
+    </div>      
+    
+    <div class="card classCenter">
+      <h4>Parent Center</h4>
+      <div id="staff-menu" class="card menu-list">
+        <a class="info" href="#">About</a>
+        <a href="#">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+       <span data-target="#staff-menu" class="v-menu">•<br>•<br>•</span>
+       <a class="card" href="parent/all.html">Parent Data</a>
+    </div>
+    
+<div class="card classCenter">
+      <h4>Student Attendance</h4>
+      <div id="staff-menu" class="card menu-list">
+        <a class="info" href="#">About</a>
+        <a href="#">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+       <span data-target="#staff-menu" class="v-menu">•<br>•<br>•</span>
+       <a class="card" href="stdAttendance.html">E-register documents</a>
+    </div>         
+  </div>
+  
+  <div class="card classCenter">
+      <h4>Admin</h4>
+      <div id="staff-menu" class="card menu-list">
+        <a class="info" href="#">About</a>
+        <a href="#">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+       <span data-target="#staff-menu" class="v-menu">•<br>•<br>•</span>
+       <a class="card" href="manageAdmins.html">Admin Management</a>
+    </div>         
+  </div>
+
+</main>
+
+      
+   <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
+  import {getFirestore, doc, setDoc, getDoc} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+  import {getAuth, updateProfile, signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+     // import {getDatabase, set, ref, onValue, child, get } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+      const firebaseConfig = {
+  apiKey: "AIzaSyCm_DSZaYVQCt0ubBwRkE9nOTryJayxH0w",
+  authDomain: "school-in-the-box.firebaseapp.com",
+  projectId: "school-in-the-box",
+  storageBucket: "school-in-the-box.firebasestorage.app",
+  messagingSenderId: "596350496353",
+  appId: "1:596350496353:web:84c66c351700ddf0824420",
+  measurementId: "G-3MGCDH4FRF"
+};
+
+  
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const auth = getAuth(app);
+    const db = getFirestore(app);
+//const schoolId= "alhidayah";
+   
+  const terms = ["first term", "second term", "third term"];
+  
+  add.onclick = e=>{
+    window.location.href = "student/registration.html";
+  }
+   var sessions = [];
+  
+  
+    document.body.onclick = e =>{  
+    let allShown = document.querySelectorAll(".show");
+    let clickedElm = e.target;
+    allShown.forEach(elm=>{
+      if (clickedElm != elm) elm.classList.remove("show");
+    });
+    
+       
+      let toShow = document.getElementById(clickedElm.dataset.target);
+      if (toShow) toShow.classList.add("show");    
+  }
+  
+school.innerHTML += shortName.toUpperCase();
+  const navLinks = document.querySelectorAll("#index a");
+
+ 
+  
+  
+  let sessionsRef = doc(db, schoolId, "sessions");
+    let sessionsDoc = await getDoc(sessionsRef);
+    if (sessionsDoc.exists()){
+    let sessions =  sessionsDoc.data().sessions;
+     sessions= sessions.sort((a, b)=>b.no - a.no);
+    sess.innerHTML = sessions[0].year + ", " +terms[sessions[0].term]
+        }
+  
+ 
+
+
+       
+const rolesElm = document.getElementById("roleContainer");
+  const resElm = document.getElementById("resourceContainer");
+ 
+  let resourcesDoc = await getDoc(doc(db, schoolId, "resources"));
+  if (resourcesDoc.exists()){
+    let resources = resourcesDoc.data();
+    for (const resId in resources){
+      break;
+      let res = resources[resId];
+      console.log(resId, JSON.stringify(resources));
+      resElm.innerHTML += `
+      <div class="card ">
+      <div id="${resId}-menu" class="card menu-list">
+        <a class="info" href="#?res=${resId}">About</a>
+        <a href="#?res=${resId}">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+      <h4>${res.title}</h4>
+      <span data-target="${resId}-menu" class="v-menu">•<br>•<br>•</span>
+      <a class="card" href="${res.location}">Oversee</a>
+    </div>`;
+
+    }
+  } else {
+    console.log("No resource");
+  }
+  
+  
+  let rolesDoc = await getDoc(doc(db, schoolId, "roles"));
+  if (rolesDoc.exists()){
+  /*  let roles = rolesDoc.data();
+    for (const roleId in roles){
+      let role = roles[roleId];
+      console.log(role, JSON.stringify(roles));
+      rolesElm.innerHTML += `
+      <div class="card ">
+      <div id="${roleId}-menu" class="card menu-list">
+        <a class="info" href="#?res=${roleId}">About</a>
+      <hr>
+        <a href="production/role.html?roleId=${roleId}">Redefine</a>
+        <!--button class="danger">Destroy</button-->
+      </div>
+      <h4>${role.title}</h4>
+      <span data-target="${roleId}-menu" class="v-menu">•<br>•<br>•</span>
+      <a class="card" href="#">View as</a>
+    </div>`;
+
+    }*/
+  } else {
+    console.log("No role");
+  }
+  
+  
+    
+
+  let d = new Date();
+  let year = d.getFullYear();
+  let month = d.getMonth() + 1;
+  let day = d.getDate();
+  let sec = d.getSeconds()+1;
+  let min = d.getMinutes()+1;
+  let h = d.getHours()+1;
+  //time.innerHTML = `${h} : {}{
+  //date.innerHTML = `${day}/${month}/${year}`;
+
+  function randint(low, high) {
+    let num = Math.random();
+    num = num*high + 1;
+    num = Math.floor(num);
+    if(num < low)
+    num =  randint(low, high);
+    return num
+}
+  
+  function generate4N(){
+    let n1 = randint(0,9);
+    let n2 = randint(0,9);
+    let n3 = randint(0,9);
+    let n4 = randint(0,9);
+    return `${n1}${n2}${n3}${n4}`;
+  }
+    generate.onclick = e=>{
+      code.innerHTML = generate4N();
+      save.style = "display: inline";
+      save.textContent = "save";
+    }
+  save.onclick = async e=>{
+    let user = auth.currentUser;
+    if (!user) return;
+    let email = user.email;
+    let name = user.displayName;
+    if (!name) {
+     name = window.prompt("It seems there is no name on your account, update your name: ");
+     if (!name) return;
+      await updateProfile(user, {
+        displayName: name
+      })
+    }
+    let c = code.textContent;
+    let authRef = doc(db, schoolId, "auth");
+    let data = {};
+    data[email] = {
+      authorizer: name,
+      code: c
+    }
+    await setDoc(authRef, data, {merge: true});
+    save.textContent = "saved!"
+    setTimeout(e=>save.style = "display: none", 1000);
+    
+  }
+  signout.onclick = e=>{
+   // window.location.href = "../signin.html";
+    signOut(auth);
+  }
+  
+  
+
+  
+  onAuthStateChanged(auth, async (user)=>{
+    if (!user){
+      window.location.href = "../../signin.html";
+      return;
+    }
+    
+    
+    let name = user.displayName;
+    if (!name){
+      name = window.prompt("It seems there is no name on your account, update your name: ");
+     if (name)
+     updateProfile(user, {displayName: name})
+    }
+    username.textContent = name;
+    let authRef = doc(db, schoolId, "auth");
+    let authDoc = await getDoc(authRef);
+    
+    let authData = authDoc.exists()? authDoc.data()[user.email] : {}
+    let c = authData? authData.code : "no code";
+    code.textContent = c;
+    
+    
+    
+  })
+  </script>
+</body>
+</html>
