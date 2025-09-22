@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <title>Hello, World!</title>
+</head>
+<body>
+  <h1>
+    School Fees Checker
+  </h1>
+  <select id="by">
+    <option>Student</option>
+    <option>Parent</option>
+  </select>
+  <select id=""></select>
+  <select id=""></select>
+  
+  <script>
+    function getQuery(sfCoord){
+    console.log(JSON.stringify(sfCoord));
+    let ref = collection(db, schoolId, "db", "fees");
+    return query(ref, 
+    where("student", "==", sfCoord.id), 
+    where("class", "==", sfCoord.class), 
+    where("year", "==", sfCoord.year), 
+    where("term", "==", sfCoord.term)
+    );
+  }
+  
+  function renderRecords(snapshots){
+    table.innerHTML = "";
+    let row = table.insertRow();
+    row.innerHTML = `
+    <th>S/N</th>
+    <th>Amount Paid</th>
+    <th>Outstanding</th>
+    <th>TPS</th>
+    `
+    console.log(snapshots.size);
+    let i=0;
+    snapshots.forEach((feesDoc)=>{
+      i++;
+      let fee = feesDoc.data();
+      let {
+        student, 
+        timestamp, 
+        cashier, 
+        amount
+      } = fee;
+      row = table.insertRow();
+      let ic = _=> row.insertCell();
+      let sn = ic();
+      sn.textContent = i;
+      let amt = ic();
+      amt.textContent = amount;
+      let tps = ic();
+      const dateTime = timestamp.toDate();
+      const formattedDate = dateTime.toLocaleString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+      tps.textContent = `
+         ${cashier.name}@${formattedDate}
+      `;   
+    })
+  }
+  </script>
+</body>
+</html>
