@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="assignor.css"/>
+  <title>Hello, Assignor!</title>
+  
+  <style>
+#resultsContent button.remove {
+    background: rgba(255, 0,0, 0.7);
+    padding: 4px;
+    color: white;
+ //   border-radius: 50%;
+   // height: 25px;
+    //aspect-ratio: 1/1;
+    
+  }
+    ol {
+      list-style-position: outside; /* push numbers outward */
+      margin-left: 2rem;           /* give space for numbers */
+    }
+
+    li {
+      background: #f3f4f6;
+      padding: 0.5rem;
+      margin: 0.25rem 0;
+      border-radius: 6px;
+        position: relative;
+    }
+    
+    
+    h3 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #1f2937; /* dark gray */
+  margin-bottom: 0.75rem;
+}
+
+label {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+select {
+  width: 100%;
+  min-height: 120px;   /* for multiple select */
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background-color: #f9fafb;
+  color: #111827;
+}
+   #sectionsSelect {
+       min-height: 40px;
+       margin-bottom: 10px;
+   }
+
+select:focus {
+  outline: none;
+  border-color: #2563eb;      /* blue border */
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+}
+
+optgroup {
+  font-weight: bold;
+  color: #1e40af; /* darker blue */
+}
+
+.assign.button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.assign.button:hover {
+  background-color: #1e40af;
+}
+
+    li > .remove {
+       display: inline-block;
+        right: 0px;
+        position: absolute;
+        top: 0;
+    }
+    .container {
+        position: relative;
+    }
+    
+
+span .remove {
+    color: red;
+}
+  </style>
+</head>
+<body>
+  <h1>Teachers Center</h1>
+  <nav>
+      <label for="assignment"><input data-target="assignmentApp" id="assignment" name="app" type="radio" checked>Assignment</label>
+      <label for="teachers" ><input data-target="teachersApp" id="teachers" name="app" type="radio">Teachers</label>
+      <label for="registration"><input data-target="registrationApp" id="registration" name="app" type="radio">Registration</button>     
+  </nav>
+  <div id="assignmentApp" class="container app">
+    <h2>Subjects Assignment</h2>
+    <!--label for="searchInput">Enter value</label-->
+    <input type="text" id="searchInput" placeholder="Enter staff username here..." />
+   
+    <button class="button" id="searchBtn">Search teacher <span class="spinner"></span></button>
+      
+    <div class="results" id="resultsBox">
+      <p id="msg"></p>
+      <div id="resultsContent">
+        <!-- Search results will appear here -->
+      </div>
+    </div>
+  </div>
+    
+   <div id="teachersApp" class="container app">
+       <h2>Teachers</h2>
+    <!--label for="searchInput">Enter value</label-->
+       <table>
+           <thead>
+               <tr>
+                   <th>S/N</th>
+                   <th>Name</th>
+                   <th>Username</th>
+               </tr>
+           </thead>
+           <tbody id="table">               
+           </tbody>
+       </table>
+  </div>
+    
+    <form id="registrationApp" class="container app">
+        <h2>Registration</h2>
+        <label>Name</label>
+        <input name="name" class="reg-in" placeholder="Full name" required>
+        <label>Username</label>
+        <input placeholder="Username" type="text" id="username" name="username" class="reg-in" pattern="^[a-z][a-z0-9]*$" title="Only lowercase letters and numbers, must start with a letter">
+        <label>Sections (<small>Optional</small>)</label>
+        <select id="sectionsSelect" multiple></select>
+        
+        <button class="button" id="createBtn">Create</button>        
+    </form>
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
+  import {getFirestore, getDocs, writeBatch, query, collection, where, runTransaction, onSnapshot, updateDoc, arrayUnion, arrayRemove, doc, setDoc, getDoc, serverTimestamp} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+  import {getAuth, signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+     // import {getDatabase, set, ref, onValue, child, get } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+      const firebaseConfig = {
+          apiKey: "AIzaSyCm_DSZaYVQCt0ubBwRkE9nOTryJayxH0w",
+  authDomain: "school-in-the-box.firebaseapp.com",
+  projectId: "school-in-the-box",
+  storageBucket: "school-in-the-box.firebasestorage.app",
+  messagingSenderId: "596350496353",
+  appId: "1:596350496353:web:84c66c351700ddf0824420",
+  measurementId: "G-3MGCDH4FRF"
+
+};
+    
+    Array.from(document
+    .querySelectorAll(`input[name="app"]`))
+    .forEach(_=>{
+        _.onchange = _=> {
+            Array.from(document
+            .querySelectorAll(`input[name="app"]`))
+            .forEach(inp=>inp.parentElement.classList.remove("active"));
+             let inp = document.querySelector(`input[name="app"]:checked`);
+            activateApp(inp);   
+        } 
+    });
+    let inp = document.querySelector(`input[name="app"]:checked`);
+    if (inp) {        
+       activateApp(inp);
+    }
+    
+   function activateApp(inp){
+       let target = inp.dataset.target;
+       target = document.getElementById(target);
+        inp.parentElement.classList.add("active");
+       Array.from(
+       document.querySelectorAll(".app.active")
+       ).forEach(app => { app.classList.remove("active")});
+       target.classList.add("active");
+   } 
+    
+    username.oninput = e=>{
+        let v = username.value.toLowerCase().replaceAll(" " , "");
+        username.value = v;
+    }
+
+    
+    const schoolId="almadeenah";
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const auth = getAuth(app);
+    const db = getFirestore(app);
+    const batch = writeBatch(db);
+    let user = await new Promise(resolve=>onAuthStateChanged(auth, user=>resolve(user)));
+    let id = user.email.replace(/@.*/, "");
+    user = (await getDoc(doc(db, schoolId, "db", "staff", id))).data();
+    const elm = tag => document.createElement(tag);
+   
+     let sections = (await getDoc(doc(db, schoolId, "section"))).data();  
+    
+    let staffCol = getDocs(collection(db, schoolId, "db", "staff"));
+
+      //console.log(JSON.stringify(sections.sss.teachers));
+    
+    
+    teachers.addEventListener("change", e=>{  
+      //  console.log(JSON.stringify(sections));
+        table.innerHTML = "";
+       // let rroles = user.roles.filter(role=>role.code=="hosec");
+        let sects = Object.keys(sections);//rroles.map(role=>role.resource.section);
+        let teachers = [];
+        sects.forEach(sect=> {
+            console.log(JSON.stringify(teachers));
+            teachers = teachers.concat(sections[sect].teachers??[].sort((a, b)=>a.name.localeCompare(b.name)))
+        });
+                
+        teachers.forEach((teacher, i)=>{
+            let row = table.insertRow();
+            let sn = row.insertCell();
+            sn.textContent = i+1;
+            let name = row.insertCell();
+            name.textContent = teacher.name;
+            let username = row.insertCell();
+            username.textContent = teacher.id;
+            sects.forEach(s=>{
+                sections[s].teachers??=[];
+                console.log(s);
+                if (sections[s].teachers.includes(teacher)) {
+                username.innerHTML +=`<br><span>${s} <button class="remove">x</button></span>`;
+                username.querySelector("button")
+                .onclick = async e=>{
+                    let r= sections[s].teachers.indexOf(teacher);                
+                    sections[s].teachers.splice(r, 1);                                    
+                    await setDoc(doc(db, schoolId, "section"), sections); 
+                    await updateDoc(doc(db, schoolId, "db", "staff", teacher.id), {sections: arrayRemove(s)});
+                    
+                    username.parentElement.remove();
+                    alert("Done");
+                }
+                }//end of if
+            });
+            username.ondblclick = e=>{
+                console.log(8);
+                searchInput.value = teacher.id;
+                assignment.click();
+                searchBtn.click();
+            };
+        });               
+    });
+    
+
+//  const rroles = user.roles.filter(role=>role.code=="hosec");
+  const sects = Object.keys(sections);//rroles.map(role=>role.resource.section);
+  sects.forEach(sect=>{
+      let opt = new Option(sect);
+      sectionsSelect.append(opt);      
+  })               
+ 
+    
+ registrationApp.onsubmit = e=>{
+     e.preventDefault();
+     let data = new FormData(registrationApp);
+     let newTeacher = {
+         timestamp: serverTimestamp(),
+        /* registrar: {id: user.username, name: user.name},*/
+         psw: "123456"
+     };
+     for (let [key, value] of data.entries()) {
+         newTeacher[key] = value;
+     }
+     newTeacher.sections = Array.from(sectionsSelect.selectedOptions).map(opt=>opt.value);
+     console.log(JSON.stringify(newTeacher));
+     
+     runTransaction(db, async transaction=>{
+         let tRef = doc(db, schoolId, "db", "staff", newTeacher.username);
+         let newTeacherDoc = await transaction.get(tRef);
+         let sections = (await transaction.get(doc(db, schoolId, "section"))).data();
+         if (newTeacherDoc.exists()){
+             alert("Username already taken.");
+             return;
+         }
+         await transaction.set(tRef, newTeacher);
+         newTeacher.sections.forEach(
+         s=>{
+             sections[s].teachers??=[];
+             sections[s].teachers.push({id: newTeacher.username, name:newTeacher.name});            
+         });
+         await transaction.set(doc(db, schoolId, "section"), sections, {merge:true});
+         alert("Done");
+         registrationApp.reset();
+     })
+ }
+   
+    
+    const loadSelect = elm("select");
+    loadSelect.id = "loads";
+    loadSelect.multiple = true;
+     //alert("Ready");
+    
+    for (const id of sects){
+      let section = sections[id];
+      let subjects = section.subjects;
+      subjects.forEach(subject=>{
+        let classes = section.classes;
+        let optg = elm("optgroup");
+        optg.label = subject;
+        loadSelect.append(optg);
+        classes.forEach(cls=>{         
+          let opt = new Option(cls);
+          optg.append(opt);
+          opt.value = `${cls}`;
+        })
+      })
+    } 
+
+  /*
+  given code, designation, resource
+  search a user and assign 
+  
+  */
+    
+     
+    var unsubscribe;
+    searchBtn.onclick = async e=>{
+      let id = searchInput.value;
+      if (!id){
+        alert("Please enter the teacher's username");
+        return;
+      }
+      
+      id = id.trim().toLowerCase();
+      resultsContent.innerHTML = "";
+      if (unsubscribe) unsubscribe();
+      let staffRef = doc(db, schoolId, "db", "staff", id);
+      searchBtn.classList.add("loading");
+      let staffSnapshot = await getDoc(staffRef);
+      searchBtn.classList.remove("loading");
+      
+        let teacher;
+      onSnapshot(staffRef, (snapshot)=>{
+          msg.innerHTML = "";
+          if (snapshot.exists()){  
+              teacher = snapshot.data();              
+              presentTeacher();              
+          } else {
+              msg.innerHTML = "No staff found.";
+          }
+        
+        
+        
+       function presentTeacher() {
+        resultsContent.innerHTML = `
+        <h2>${teacher.name.toUpperCase()}</h2>
+        <h3>Academic Loads</h3>
+        <ol>
+           <li>None</li>
+        </ol>
+        `;
+        let loadList = resultsContent.querySelector("ol");
+         teacher.loads??= [];
+        if (teacher.loads.length) loadList.innerHTML = "";
+        teacher.loads.forEach(load=>{
+           
+          let cls = load.class.toUpperCase();
+          let subject = load.subject.toUpperCase();
+          let list = elm("li");
+          list.innerHTML = `${cls} ${subject}<button class="remove">x</button>`;
+          loadList.append(list);
+          list.querySelector("button")
+          .onclick = async e=>{
+            let btn = e.target;
+            btn.innerHTML = "Removing..";
+            btn.disabled = true;
+            btn.classList.add("loading");
+            try {
+              await updateDoc(staffRef, {
+              loads: arrayRemove({"class": cls.toLowerCase(), subject: subject.toLowerCase()})
+              });
+                //alert("done");
+            } catch(e){
+              console.error(e.message);
+              btn.innerHTML = "Failed, try again.";
+              btn.disabled = false;
+              btn.classList.add("loading");
+              setTimeout(_=> btn.innerHTML = "x", 2000);      
+            }
+          }
+        });
+        let newLoad = elm("div");
+        newLoad.innerHTML = `
+           <hr>
+        <h3>New Academic Load</h3>
+         <ol class="newList"></ol>
+        <label for="load">Select a subject under a class</label>
+        <button class="assign">Assign</button>
+        `;
+        newLoad.children[2].after(loadSelect);
+        loadSelect.onchange = e=>{
+            
+            let newL = loadSelect.parentElement.querySelector(".newList");
+            newL.innerHTML = "";
+           Array
+          .from(loadSelect.selectedOptions)
+          .forEach(opt=> {             
+              newL.innerHTML += `<li>${opt.value.toUpperCase()} ${opt.parentElement.label.toUpperCase()}</li>`;
+          });
+            
+        }
+        resultsContent.append(newLoad);
+        newLoad
+        .querySelector("button")
+        .onclick = async e=>{
+         // let inp = document.getElementById("load");
+          if (!loadSelect.value) return;
+          let loads = Array
+          .from(loadSelect.selectedOptions)
+          .map(opt=> ({"class": opt.value.toLowerCase(), subject: opt.parentElement.label.toLowerCase()}));
+          console.log(JSON.stringify(loads));
+         
+          let btn = e.target;
+          btn.innerHTML = "Assigning..";
+          btn.disabled = true;
+          btn.classList.add("loading");
+          if (teacher.loads)
+          await updateDoc(staffRef, {
+            loads: arrayUnion(...loads)
+          })
+         else await setDoc(staffRef, {loads}, {merge: true});
+          
+          btn.innerHTML = "Assigned!";
+          btn.disabled = false;
+          setTimeout(_=>btn.innerHTML = "Assign", 2000);
+          
+        }
+       }
+          
+      });
+    }
+  </script>
+</body>
+</htm>
