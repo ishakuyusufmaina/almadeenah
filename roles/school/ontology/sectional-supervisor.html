@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hello, World!</title>
+  
+  <style>
+  :root {
+    --primary: #2563eb;
+    --primary-hover: #1e40af;
+    --background: #f9fafb;
+    --text: #1f2937;
+    --border: #d1d5db;
+    --radius: 8px;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    background: var(--background);
+    color: var(--text);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.5;
+    position: relative;
+  }
+
+  h1 {
+    text-align: center;
+    color: var(--primary);
+    margin-bottom: 20px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  }
+
+  th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    background: var(--primary);
+    color: white;
+    font-weight: bold;
+  }
+
+  tr:hover td {
+    background: #f1f5f9;
+  }
+
+  input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    outline: none;
+    transition: 0.2s;
+  }
+
+  input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+  }
+
+  #save, button.new {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    background: var(--primary);
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  #save:hover, .new:hover {
+    background: var(--primary-hover);
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+      display: block;
+      width: 100%;
+    }
+
+    tr {
+      margin-bottom: 15px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    th {
+      display: none;
+    }
+
+    td {
+      display: flex;
+     // justify-content: space-between;
+      align-items: center;
+      border: none;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td:first-child {
+      font-weight: bold;
+      background: #f8fafc;
+    }
+  }
+  
+  button.new {
+    padding: 6px;
+    margin: 0;
+    margin-right: 4px;
+    font-weight: bold;
+    background: white;
+    color: black;
+    border-radius: 50%;
+    display: flex;
+    height: 25px;
+    font-size: 24px;
+    text-align: center; 
+    aspect-ratio: 1/1;
+    align-items: center;
+    justify-content: center;
+  }
+  
+    #browserContainer {
+    display: none;
+    position: absolute;
+    top: 100px;
+    width: 90%;
+    height: 80%;
+    left: calc(50% - 90%/2);
+    background: inherit;
+    overflow: auto;
+    z-index: 20;
+    border: 1px solid black;
+    border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: auto;
+
+  }
+  .show#browserContainer {
+    display: block;
+  }
+#browserContainer > iframe {
+    height: 100%;
+    width: 100%;
+  }
+</style>
+
+</head>
+<body>
+  <div data-target="browserContainer" id="browserContainer">
+    <iframe></iframe>
+  </div>
+  <h1>
+    Sectional Supervisor Designations
+  </h1>
+  <table>
+    <tr>
+      <th>Section</th>
+      <th>Designation</th>
+    </tr>
+    <tbody id="table"></tbody>
+  </table>
+  <button id="save">Save</button>
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
+  import {getFirestore, doc, onSnapshot, query, where, arrayRemove, collection, updateDoc, setDoc, getDoc} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+  import {getAuth, signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+     // import {getDatabase, set, ref, onValue, child, get } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+      const firebaseConfig = {
+  apiKey: "AIzaSyCm_DSZaYVQCt0ubBwRkE9nOTryJayxH0w",
+  authDomain: "school-in-the-box.firebaseapp.com",
+  projectId: "school-in-the-box",
+  storageBucket: "school-in-the-box.firebasestorage.app",
+  messagingSenderId: "596350496353",
+  appId: "1:596350496353:web:84c66c351700ddf0824420",
+  measurementId: "G-3MGCDH4FRF"
+
+};
+  
+  
+  const schoolId="almadeenah";
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    
+    const terms = ["first term", "second term", "third term"];
+
+  let data;
+  let sessionsRef = doc(db, schoolId, "sessions");
+  let sectionRef = doc(db, schoolId, "section");
+  let sections = (await getDoc(sectionRef)).data();
+  
+  Object.keys(sections)
+  .forEach(secK=>{
+    presentHosect(secK, 1);
+    presentHosect(secK, 2);
+   // presentHosect(secK, 3);
+  });
+  
+  
+  function presentHosect(secK, n){
+    let code = n==1? "ss" : n==2? "ss2" : "ss3"
+    let section = sections[secK];
+    section.headTitles??={};
+    section.headTitles[code]??="";
+    let role = {code, designation: section.headTitles[code], resource: {section: secK}};
+    console.log(JSON.stringify(role));
+    const ranks = {
+      1: "first",
+      2: "second",
+      3: "third"
+    }
+    let row = table.insertRow();
+    let td = row.insertCell();
+    td.innerHTML = (`<button>+</button>${ranks[n]} Sectional Supervisor of ` +secK).toUpperCase();
+   let newBtn = td.querySelector("button");
+    newBtn.classList.add("new");
+    newBtn.onclick = e =>{
+         let role = {code, designation: section.headTitles[code], resource: {section: secK}};
+          let param = JSON.stringify(role);
+          let iframe = browserContainer.children[0];
+          iframe.src = `role-assignment/academic.html?param=${param}`;
+          e.stopPropagation();
+          browserContainer.click();
+          browserContainer.scrollIntoView();
+
+    }
+    //td.append(assignBtn);
+    td = row.insertCell();
+    section.headTitles??={};
+    section.headTitles[code]??="";
+    td.innerHTML = `
+    <input value="${section.headTitles[code]}" placeholder="title">
+    `;
+    td.querySelector("input")
+    .onchange = e=>{ 
+      section.headTitles??={/*hosec, hom, hoset*/};
+      section.headTitles[code] = e.target.value;
+      
+    }
+    td = row.insertCell();
+    td.innerHTML = "Supervisor"
+   let q = query(collection(db, schoolId, "db", "staff"), where("roles", "array-contains", role));
+    onSnapshot(q, (docSnapshots)=>{
+      td.innerHTML = "";
+      docSnapshots.forEach(docSnapshot=>{
+        let hosec = docSnapshot.data();
+        let span = document.createElement("span");
+        td.append(span);
+        span.style.display = "inline-block";
+        span.style.margin = "6px";
+        span.innerHTML = hosec.name + "<button> x</button>";
+        span.querySelector("button")
+        .onclick = async e=>{
+          let btn = e.target;
+          btn.innerHTML = "discharging...";
+          let ref = doc(db, schoolId, "db", "staff", docSnapshot.id);
+          try {
+            await updateDoc(ref, {roles: arrayRemove(role)});
+            span.remove();
+          } catch (e) {
+            btn.innerHTML = "Failed, try again.";
+            setTimeout(_=>btn.innerHTML = " x", 2000)
+          }
+        }
+      })
+    })
+    
+  }
+  
+  
+  save.onclick = async e=>{
+    save.innerHTML = "Saving..";
+    await setDoc(sectionRef, sections, {merge: true});
+    save.innerHTML = "Saved!";
+    setTimeout(_=>save.innerHTML = "Save", 2000);
+  }
+  
+  document.body.onclick = e =>{  
+    let allShown = document.querySelectorAll(".show");
+    let clickedElm = e.target;
+    allShown.forEach(shown=>{
+      if (clickedElm != shown && !shown.contains(clickedElm)) shown.classList.remove("show");
+    });
+    
+    /*if (e.target != menu )
+    document.querySelector(".menu-container").classList.remove("show");
+    */    
+      let toShow = document.getElementById(clickedElm.dataset.target);
+      if (toShow) toShow.classList.add("show");    
+  }
+  </script>
+</body>
+</html>

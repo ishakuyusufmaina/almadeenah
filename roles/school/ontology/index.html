@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">  <title>Hello, World!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --background: #f9fafb;
+      --text: #1f2937;
+      --card-bg: #ffffff;
+      --border: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: var(--background);
+      color: var(--text);
+      padding: 2rem;
+      line-height: 1.6;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    section {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    section:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      margin-bottom: 0.8rem;
+      color: var(--text);
+      text-transform: uppercase;
+    }
+  
+  h3 {
+    font-size: 1.05rem;
+      margin-top: 0.8rem;
+      color: var(--text);
+  }
+
+    .info-link {
+      display: inline-block;
+      text-decoration: none;
+      background-color: var(--primary);
+      color: white;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .info-link:hover {
+      background-color: var(--primary-hover);
+      transform: scale(1.03);
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>School Ontology</h1>
+  
+  <section>
+    <h2>Section</h2>
+    <p><a href="section.html" class="info-link">Add, delete, or update school sections and their respective classes.</a></p>
+  
+    <h3>Heads</h3>
+    <p><a href="hos-designation-v2.html" class="info-link">Label and assign sectional heads.</a></p>
+    <h3>Supervisor</h3>
+    <p><a href="sectional-supervisor.html" class="info-link">Label and assign sectional supervisors.</a></p>
+    <h3>School Fees</h3>
+    <p><a href="fees-setting.html" class="info-link">Fix current term's school fees by section</a></p>
+    <h3>Subjects</h3>
+    <p><a href="subjects.html" class="info-link">Update sectional subject list</a></p>
+    <h3>Timetable</h3>
+    <p><a href="sectional-time.html" class="info-link">Set section-based timetable</a></p>
+    <h3>Scoring System</h3>
+    <p><a href="scoring-system/configuration.html" class="info-link">Configure sectional scoring system</a></p>
+
+  </section>
+
+  <section>
+    <h2>Class</h2>
+    <p><a href="class.html" class="info-link">Add or remove a class under a section; label and assign head of class.</a></p>
+    <h3>Timetable</h3>
+    <p><a href="classical-time.html" class="info-link">Set class-based timetable</a></p>
+
+  </section>
+
+  <section>
+    <h2>Set</h2>
+    <p><a href="set.html" class="info-link">Organize classes on the same level into a set; label and assign head of set.</a></p>
+  </section>
+
+  <section>
+    <h2>Arm</h2>
+    <p><a href="arm.html" class="info-link">Organize sets of the same section into an arm; label and assign head of arm.</a></p>
+  </section>
+  
+   <section>
+    <h2>Departments</h2>
+    <p><a href="departments.html" class="info-link">Organize subjects into departments; label and assign head of department</a></p>
+   </section>
+  
+  <section>
+    <h2>Role-Based Resource</h2>
+    <p><a href="resource.html" class="info-link">Add, delete, or update role-based resources.</a></p>
+  
+    <h3>Heads</h3>
+    <p><a href="generic-role.html" class="info-link">Label and assign head of resource</a></p>
+  </section>
+</body>
+</html>

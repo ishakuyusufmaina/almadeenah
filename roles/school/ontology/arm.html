@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Hello, School!</title>
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9fafb;
+    color: #1f2937;
+    margin: 0;
+    padding: 20px;
+    position: relative;
+  }
+
+  h1 {
+    text-align: center;
+    color: #2563eb;
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    margin-top: 30px;
+    color: #374151;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 4px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border-radius: 10px;
+   // overflow: hidden;
+  }
+
+  th, td {
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+  }
+
+  th {
+    background: #f3f4f6;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  input[type="text"], input[type="number"], input:not([type]) {
+    width: 90%;
+    padding: 6px 8px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    outline: none;
+  }
+
+  input:focus, select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.3);
+  }
+
+  select {
+    padding: 6px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    min-width: 120px;
+  }
+
+  button {
+    background: #2563eb;
+    color: #fff;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+  }
+
+  button:hover {
+    background: #1e40af;
+  }
+
+  button:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+  }
+
+  #save {
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 16px;
+    padding: 8px 18px;
+  }
+
+  /* Head remove button style*/
+  td button {
+    color: #dc2626;
+    padding: 5px 5px;
+    border-radius: 6px;
+    background: inherit;
+    font-weight: bold;
+  }
+
+  td button:hover {
+    background: #b91c1c;
+  }
+  td button.discharging {
+    color:"white";
+    background:"#b91c1c";
+  }
+
+  /* "New Set" button */
+  table + button {
+    margin-top: 10px;
+    background: #059669;
+  }
+
+  table + button:hover {
+    background: #047857;
+  }
+  
+  .action {
+    position: relative;
+    box-sizing: border-box;
+    padding: 20px;
+  }
+  .action > span {
+    display: block;
+    height: 0px;
+    width: 100%;
+    border: 2px solid black;
+    margin: 6px;    
+    box-sizing: border-box;
+  }
+  .action > .action-list {
+ 
+    display: none;
+  position: absolute;
+  right: 0;
+  z-index: 110;
+  text-align: left;
+  top: 5px;
+  background-color: white;
+  padding: 20px;
+ // min-width: 220px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: auto;
+    list-style: none;
+    width: 150px;
+
+  }
+  
+  .action > .action-list.show  {
+    
+    display: block;
+  }
+  
+  .action > .action-list > li:not(.homs){
+  overflow: auto;
+  transition: background 0.3s, transform 0.2s;
+  margin: 12px 0;
+  color: #80cbc4;
+  font-weight: bold;
+  transition: color 0.3s ease;
+    background: #2563eb;
+    color: #fff;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+
+
+}
+  .homs > ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+ .homs > *{
+   margin: 0;
+ }
+
+.action> li:not(.homs):hover { 
+  background: #1e40af;
+}
+  
+  
+  /* Remove button style */
+  .action > .action-list> li.remove {
+    background: #dc2626;
+    text-align: center;
+  }
+  
+  #browserContainer {
+    display: none;
+    position: absolute;
+    top: 100px;
+    width: 90%;
+    height: 80%;
+    left: calc(50% - 90%/2);
+    background: inherit;
+    overflow: auto;
+    z-index: 20;
+    border: 1px solid black;
+    border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: auto;
+
+  }
+  .show#browserContainer {
+    display: block;
+  }
+#browserContainer > iframe {
+    height: 100%;
+    width: 100%;
+  }
+</style>
+  
+</head>
+<body>
+  <div data-target="browserContainer" id="browserContainer">
+    <iframe></iframe>
+  </div>
+  <h1>
+    ARMS
+  </h1>
+  
+  <div id="tableContainer">
+    
+  </div>
+  <hr>
+  <button id="save">Save</button>
+  
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
+  import {getFirestore, doc, updateDoc, arrayRemove, onSnapshot, query, where, collection, setDoc, getDoc} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+  import {getAuth, signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+     // import {getDatabase, set, ref, onValue, child, get } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+      const firebaseConfig = {
+          apiKey: "AIzaSyCm_DSZaYVQCt0ubBwRkE9nOTryJayxH0w",
+  authDomain: "school-in-the-box.firebaseapp.com",
+  projectId: "school-in-the-box",
+  storageBucket: "school-in-the-box.firebasestorage.app",
+  messagingSenderId: "596350496353",
+  appId: "1:596350496353:web:84c66c351700ddf0824420",
+  measurementId: "G-3MGCDH4FRF"
+
+};
+  
+  
+  const schoolId="almadeenah";
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    
+    const terms = ["first term", "second term", "third term"];
+
+  let data;
+  let sessionsRef = doc(db, schoolId, "sessions");
+  let sectionRef = doc(db, schoolId, "section");
+  let section = await getDoc(sectionRef);
+  if (section.exists()){
+    data = section.data();
+   console.log(JSON.stringify(Object.keys(data)));
+  } else
+  data = {
+    
+  }
+  
+  save.onclick = async _=>{
+    save.innerHTML = "Saving..";
+    await setDoc(doc(db, schoolId, "section"), data, {merge: true});
+    save.innerHTML = "Saved!";
+    setTimeout(_=> save.innerHTML="Save", 2000);
+  }
+  presentArms(data);
+
+  function presentArms(sections){
+    tableContainer.innerHTML = "";
+    const elm = tag=>document.createElement(tag);
+    const getElm = id=>document.getElementById(id);
+    for (const sectId in sections){
+     // if (sectId == "test") return;
+      sections[sectId].headTitles??={};
+      let table = elm("table");
+      let sectH = elm("h2");
+      sectH.innerHTML = sectId.toUpperCase() +" ARMS";  
+      let desg = elm("div");
+      desg.innerHTML = `
+      <label>Head of Arm Designation: </label>
+      <input value="${sections[sectId].headTitles.hom?? ''}" placeholder="title">
+      `;
+      desg.querySelector("input")
+      .onchange = e=>{
+        
+        sections[sectId].headTitles.hom = e.target.value;
+        presentArm(sectId, table);
+      };
+      tableContainer.append(sectH, desg);  
+      tableContainer.append(table);      
+      presentArm(sectId, table);      
+    }
+    function presentArm(sectId, table){
+      table.innerHTML = "<tr><th>Arm</th><th>Sets</th><th>Action</th></tr>";
+      let section = sections[sectId];
+      let addBtn = getElm("add"+sectId)?? elm("button");
+      addBtn.id = "add"+sectId;
+      addBtn.innerHTML = "New Arm";
+      table.after(addBtn);
+      section.arms = section.arms?? [];    
+      section.arms.forEach((arm, i)=>{
+        arm.heads??= [{name: "Musa Ahmad", id: "musa"}, {name: "Fatsuma Gujba", id: "gujba"}];
+        let row = table.insertRow();
+        const {heads, name, sets} = arm;
+        let td = row.insertCell();
+        let inp = elm("input");
+        inp.value = name;
+        inp.onchange = _=> {
+          arm.name = inp.value;
+          present();
+        }
+        td.append(inp);
+        td = row.insertCell();     
+        let select = elm("select");
+        td.append(select);
+        select.multiple = true;
+        sets.forEach((set, j)=>{
+          if (!section.sets
+          .map(s=>s.name)
+          .includes(set)) {
+            sets.splice(j, 1);
+            return;
+          }
+          let opt = new Option(set);
+          select.append(opt);
+          opt.value = set;
+          opt.selected = true;          
+        });
+        section.sets.forEach(set=>{
+          if (sets.includes(set.name)) return;
+          let opt = new Option(set.name);
+          select.append(opt);
+          opt.value = set.name;
+        });
+        select.onchange = _=>{
+          arm.sets = Array.from(select.selectedOptions).map(opt=>opt.value);          
+        }       
+        let remove = elm("button");
+        remove.innerHTML = "Remove";
+        let menu = elm("span");
+        menu.innerHTML = "•<br>•<br>•"
+        td = row.insertCell();
+        td.innerHTML = "<span></span><span></span><span></span>"
+        td.dataset.target = sectId+name+i;
+        td.classList.add("action");
+        let actList = elm("ul");
+        actList.classList.add("action-list");
+        actList.id = td.dataset.target;
+        actList.innerHTML = `
+       <li class="new">+ New <span class='hom'>${section.headTitles.hom?? "Untitled"} <small>(${name})</small></span></li>
+        <li class="homs">
+        <h4><span class='hom'>${section.headTitles.hom?? "Untitled"}</span>  <small>(${name})</small></h4>
+        <ul class="homs">
+        </ul>        
+        </li>
+        <li class="remove">Remove ${name}</li>
+        `;
+        let homsList = actList.querySelector(".homs");
+        let newBtn = actList.querySelector(".new");
+        let removeBtn = actList.querySelector(".remove");
+        newBtn.onclick = e=>{
+          
+          let [code, designation, resource] = ["hom", section.headTitles.hom, {section: sectId, arm: name}];
+          let param = JSON.stringify({code, designation, resource});
+          let iframe = browserContainer.children[0];
+          iframe.src = `role-assignment/academic.html?param=${param}`;
+          e.stopPropagation();
+          browserContainer.click();
+          browserContainer.scrollIntoView();
+          
+        };
+        if (section.headTitles.hom && name){
+          let q = query(collection(db, schoolId, "db", "teachers"), where("roles", "array-contains", {code: "hom", designation: section.headTitles.hom, resource: {section: sectId, arm: name} }));
+          onSnapshot(q, async (docSnapshots)=>{
+            homsList.innerHTML = "";
+            docSnapshots.forEach(docSnapshot=>{
+              let rolePlayer = docSnapshot.data();
+              console.log(JSON.stringify(rolePlayer));
+              let li = elm("li");
+              li.innerHTML = rolePlayer.name;
+              let remBtn = elm("button");
+              remBtn.innerHTML = "x";
+              li.append(remBtn);
+              homsList.append(li);
+              remBtn.onclick = async e=>{
+                remBtn.innerHTML = "Discharging..."
+                remBtn.classList.add("discharging");
+                let role = {code: "hom", designation: section.headTitles.hom, resource: {section: sectId, arm: name} };
+               let ref = doc(db, schoolId, "db", "teachers", docSnapshot.id);
+                try {
+                    await updateDoc(ref, {roles: arrayRemove(role)});
+                    li.remove();
+                } catch(e){
+                  remBtn.innerHTML = "Failed, try again."
+                  setTimeout(_=>remBtn.innerHTML = "x", 2000);
+                  remBtn.classList.remove("discharging");
+                }
+              //td.click();
+            }
+            })
+          })
+        }
+        
+        td.append(actList);
+        removeBtn.onclick = _=>{
+          section.arms.splice(i, 1);
+          present();
+        }        
+      });//end of row insertions
+      addBtn.onclick = e=>{
+        section.arms.push({name:"", sets:[]});
+        present(addBtn);
+      }
+      function present(){
+        addBtn.remove();
+        presentArm(sectId,table);
+       
+      }
+    }
+  }
+   
+  
+  
+  document.body.onclick = e =>{  
+    let allShown = document.querySelectorAll(".show");
+    let clickedElm = e.target;
+    allShown.forEach(shown=>{
+      if (clickedElm != shown && !shown.contains(clickedElm)) shown.classList.remove("show");
+    });
+    
+    /*if (e.target != menu )
+    document.querySelector(".menu-container").classList.remove("show");
+    */    
+      let toShow = document.getElementById(clickedElm.dataset.target);
+      if (toShow) toShow.classList.add("show");    
+  }
+  
+   
+  </script>
+</body>
+</html>
