@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="assignor.css"/>
+  <title>Hello, Assignor!</title>
+  
+  </style>
+</head>
+<body>
+  <h1>
+  </h1>
+  <body>
+  <div class="container">
+    <h1>Role Assignor</h1>
+    <!--label for="searchInput">Enter value</label-->
+    <input type="text" id="searchInput" placeholder="Enter staff username here..." />
+
+    <button class="button" id="searchBtn">Search <span class="spinner"></span></button>
+    <div class="results" id="resultsBox">
+      <p id="msg"></p>
+      <div id="resultsContent">
+        <!-- Search results will appear here -->
+        
+      </div>
+    </div>
+  </div>
+    <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
+  import {getFirestore, updateDoc, arrayUnion, doc, setDoc, getDoc} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+  import {getAuth, signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
+     // import {getDatabase, set, ref, onValue, child, get } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+      const firebaseConfig = {
+          apiKey: "AIzaSyCm_DSZaYVQCt0ubBwRkE9nOTryJayxH0w",
+  authDomain: "school-in-the-box.firebaseapp.com",
+  projectId: "school-in-the-box",
+  storageBucket: "school-in-the-box.firebasestorage.app",
+  messagingSenderId: "596350496353",
+  appId: "1:596350496353:web:84c66c351700ddf0824420",
+  measurementId: "G-3MGCDH4FRF"
+
+};
+    const schoolId="almadeenah";
+      const app = initializeApp(firebaseConfig);
+      const analytics = getAnalytics(app);
+      const auth = getAuth(app);
+    const db = getFirestore(app);
+
+  /*
+  given code, designation, resource
+  search a user and assign 
+  
+  */
+  let p = new URLSearchParams(window.location.search);
+  let roleLoad = p.get("param");
+  roleLoad = JSON.parse(roleLoad);
+  console.log(roleLoad.code);
+    
+  let {code, designation, resource} = roleLoad;
+  msg.innerHTML = `
+    You are about to assign a
+    role with code: ${code}, designated as ${designation},
+    and to operate on ${function(resource){
+    let str = "";
+    for (const id in resource){
+      str +=` <span>${id}: ${resource[id]}</span>`;
+    }
+    return str;
+    }(resource)}
+    `;
+    
+    searchBtn.onclick = async e=>{
+      let id = searchInput.value;
+      if (!id){
+        alert("Please enter staff username");
+        return;
+      }
+      
+      id = id.trim().toLowerCase();
+      resultsContent.innerHTML = "";
+      let staffRef = doc(db, schoolId, "db", "staff", id);
+      searchBtn.classList.add("loading");
+      let staffSnapshot = await getDoc(staffRef);
+      searchBtn.classList.remove("loading");
+      if (staffSnapshot.exists()){
+        let staff = staffSnapshot.data();
+        let roles = staff.roles??[];
+        console.log("Roles: ", JSON.stringify(roles));
+        resultsContent.innerHTML = `
+        ${staff.name} <button>assign</button>
+        <h3>Roles</h3>
+        <ul>
+        ${roles.map(role=> role.designation)}
+        </ul>
+        `;
+        
+        resultsContent
+        .querySelector("button")
+        .onclick = async e=>{
+          let btn = e.target;
+          btn.innerHTML = "Assigning..";
+          btn.disabled = true;
+          btn.classList.add("loading");
+          if (staff.roles)
+          await updateDoc(staffRef, {
+            roles: arrayUnion(roleLoad)
+          })
+         else await setDoc(staffRef, {roles: [roleLoad]}, {merge: true});
+          
+          btn.innerHTML = "Assigned!";
+          btn.disabled = false;
+          setTimeout(_=>btn.innerHTML = "Assign", 2000);
+          
+        }
+      }
+    }
+  </script>
+</body>
+</htm>
