@@ -368,7 +368,7 @@
     parent = linkParent.parentElement;
     let p = pin.value;
     console.log(p);
-    let q = query(collection(db, schoolId, "db", "students"), where("pin"==p));
+    let q = query(collection(db, schoolId, "db", "students"), where("pin", "==", p));
     let info = document.createElement("div");
     if (parent.children[1]) parent.children[1].remove();
     info.innerHTML = "Checking...";
@@ -391,7 +391,8 @@
         let ward = doc.data();
         wards.push(ward.name)
       });
-      info.innerHTML = wards;
+          info.innerHTML +="<br>No. of wards: "+wards.length;
+      info.innerHTML += "<br>wards: "+wards;
       
     } else {
       info.innerHTML = "No such parent found";
