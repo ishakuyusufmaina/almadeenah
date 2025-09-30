@@ -344,7 +344,7 @@
   */
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-analytics.js";
-  import {getFirestore, doc, serverTimestamp, setDoc, getDoc, runTransaction} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+  import {getFirestore, collection, doc, serverTimestamp, setDoc, getDoc, getDocs, where, query, runTransaction} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
   import {getAuth, signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
      // import {getDatabase, set, ref, onValue, child, get } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
       const firebaseConfig = {
@@ -368,10 +368,10 @@
     parent = linkParent.parentElement;
     let p = pin.value;
     console.log(p);
-    
+    let q = query(collection(db, schoolId, "db", "students"), where("pin"==p));
     let info = document.createElement("div");
     if (parent.children[1]) parent.children[1].remove();
-info.innerHTML = "Checking...";
+    info.innerHTML = "Checking...";
     let parentDoc;
     try {
     parentDoc = await getDoc(doc(db, schoolId, "db", "parents", "pin"+p.trim()));
@@ -385,6 +385,13 @@ info.innerHTML = "Checking...";
       Parent Name: ${par.fullname}<br>
       Parent ID: ${par.id}
       `;
+      let wardsDoc = await getDocs(q);
+      let wards=[];
+      wardsDoc.forEach(doc=>{
+        let ward = doc.data();
+        wards.push(ward.name)
+      });
+      info.innerHTML = wards;
       
     } else {
       info.innerHTML = "No such parent found";
