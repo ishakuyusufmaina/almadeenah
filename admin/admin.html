@@ -318,11 +318,7 @@ z-index: 102;
       <a href="#">Communicate with parents and or staff seamlessly</a>
     </div>
       
-    <div class="card classCenter">
-      <h2>School Fees</h2>
-      <a href="school-fees/setting.html">School Fee Setting</a>
-      <!--, View and Record School Fees</a-->
-    </div>
+    
       
       
      
@@ -383,7 +379,27 @@ z-index: 102;
       <h2>Parents</h2>
       <p>(Coming soon)</p>
     </div-->
+      
+      <div class="card classCenter">
+      <h2>School Fees</h2>
+      <a href="school-fees/setting.html">Fix school fees</a>
+      <!--, View and Record School Fees</a-->
+    </div>
 
+        <div class="card feesRecord">
+      <h2>Record School Fees</h2>
+      <a href="bursary/index.html">Record School Fees</a>
+      </div>
+
+      <div class="card feesView">
+      <h2>View School Fees</h2>
+      <a href="bursary/records.html">View School Fees</a>
+      </div>
+      
+    <div class="card feesDefaulter">
+      <h2>School Fees Defaulters</h2>
+      <a href="bursary/defaulter.html">Check Defaulters</a>
+      </div>
   
 </main>
    <script type="module">
@@ -434,9 +450,12 @@ const adminFunctions = [
     "subjects",
     "auth",
     "monTAS",
-    "monSA"
+    "monSA",
+  "feesSet",
+  "feesRecord",
+  "feesView",
+  "feesDefaulter"
   ];
-  
     
     
 adminFunctions.forEach(fx=>{
