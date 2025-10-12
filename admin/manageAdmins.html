@@ -187,7 +187,7 @@
       const auth = getAuth(app);
     const db = getFirestore(app);
   
-//  const schoolId = "alhidayah";
+  const schoolId = "almadeenah";
   let teacherDoc = await getDoc(doc(db, schoolId, "teachers"));
   let teachers = teacherDoc.exists()? teacherDoc.data() : {};
   let sectionDoc = await getDoc(doc(db, schoolId, "section"));
@@ -205,6 +205,10 @@
     auth: "Authorize teach and sign",
     monTAS: "Monitor teach and sign",
     monSA: "Monitor Student Attendance",
+    feesSet: "Fix School Fees",
+    feesRecord: "Record School Fees",
+    feesView: "View School Fees",
+    feesDefaulter: "Check School Fees Defaulters"
   };
   
   
