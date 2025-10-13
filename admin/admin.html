@@ -5,6 +5,8 @@
   <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
  <script src="../config.js"></script>
+ <script src="../batch2.js"></script>
+
   <title>School Admin</title>
 <style>
   * {
@@ -27,7 +29,8 @@
   //  display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #0078D7;
+   background: #0078D7;
+  //  background: #800000;
     color: #fff;
     padding: 15px 20px;
     //border-radius: 10px;
@@ -280,59 +283,29 @@ z-index: 102;
         <a href="teachAndLog.html">Monitor Teach and Sign</a>
       </div>
       
-    <!--div class="card monSA">
-      <h2>Student Attendance</h2>
+    <div class="card monSA">
+      <h2>Student Attendace</h2>
       <a href="stdAttendance.html">Monitor Student Attendance</a>
-    </div-->
-          <div class="card classCenter">
-      <h2>Admission</h2>
-      <a href="admission/application.html">Application</a>
-              <a href="admission/admission.html">Admissions</a>
-            
-          </div>
-      
-     <div class="card classCenter">
-      <h2>Student Center</h2>
-      <a href="student/index.html">Manage Student</a>
-    </div>
-     <div class="card classCenter">
-      <h2>Class Center</h2>
-      <a href="class/index.html">Manage Class</a>
-    </div>
-      <div class="card classCenter">
-      <h2>Section Center</h2>
-      <a href="#">Manage Section</a>
-    </div>
-     <div class="card classCenter">
-      <h2>Staff Center</h2>
-      <a href="#">Manage both Academic and Non-Academic Staff</a>
     </div>
       
-   <div class="card classCenter">
-      <h2>Parent/Guardian</h2>
-      <a href="#">Manage Parent</a>
-    </div>
-      
-      <div class="card classCenter">
-      <h2>Communication Center</h2>
-      <a href="#">Communicate with parents and or staff seamlessly</a>
-    </div>
-      
-    
-      
-      
-     
        
       
     
-    <!--div class="card rc">
+    <div class="card rc">
       <h2>Academic Performance</h2>
       <a href="reportCards.html">Report Cards</a>
       <a href="reportOverview.html">Overview</a>
      
-    </div-->
+    </div>
       
-    
+    <div class="card application">
+      <h2>Application</h2>
+         <a href="admission/application.html">Manage Application for Admission</a>
+      </div>
+    <div class="card admission">
+      <h2>Admission</h2>
+         <a href="admission/admission.html">Manage School Admissions</a>
+      </div>
 
     <div class="card session">
       <h2>Academic Session</h2>
@@ -356,7 +329,7 @@ z-index: 102;
 
     <div class="card students">
       <h2>Students</h2>
-      <a href="students.html">Manage Students</a>
+      <a href="student/index.html">Manage Students</a>
     </div>
 
     <div class="card fm">
@@ -368,25 +341,13 @@ z-index: 102;
       <h2>Manage Admins</h2>
       <a href="manageAdmins.html">Admin Settings</a>
     </div>
-      
-    <!--/div>
-      <div class="card">
-      <h2>Fees Management</h2>
-      <p>[Work in Progress (20%)]</p>
-    </div-->
 
-    <!--div class="card">
-      <h2>Parents</h2>
-      <p>(Coming soon)</p>
-    </div-->
-      
-      <div class="card classCenter">
-      <h2>School Fees</h2>
-      <a href="school-fees/setting.html">Fix school fees</a>
-      <!--, View and Record School Fees</a-->
-    </div>
+      <div class="card feesSet">
+      <h2>School Fees Setting</h2>
+      <a href="school-fees-setting.html">Fix School Fees</a>
+      </div>
 
-        <div class="card feesRecord">
+      <div class="card feesRecord">
       <h2>Record School Fees</h2>
       <a href="bursary/index.html">Record School Fees</a>
       </div>
@@ -400,6 +361,18 @@ z-index: 102;
       <h2>School Fees Defaulters</h2>
       <a href="bursary/defaulter.html">Check Defaulters</a>
       </div>
+      
+    <!--/div>
+      <div class="card">
+      <h2>Fees Management</h2>
+      <p>[Work in Progress (20%)]</p>
+    </div-->
+
+    <!--div class="card">
+      <h2>Parents</h2>
+      <p>(Coming soon)</p>
+    </div-->
+
   
 </main>
    <script type="module">
@@ -408,7 +381,7 @@ z-index: 102;
   import {getFirestore, doc, setDoc, getDoc} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
   import {getAuth, updateProfile, signOut, onAuthStateChanged} from "https://www.gstatic.com/firebasejs/10.4.0/firebase-auth.js";
      // import {getDatabase, set, ref, onValue, child, get } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
-      const firebaseConfig = {
+    const firebaseConfig = {
   apiKey: "AIzaSyCm_DSZaYVQCt0ubBwRkE9nOTryJayxH0w",
   authDomain: "school-in-the-box.firebaseapp.com",
   projectId: "school-in-the-box",
@@ -416,14 +389,14 @@ z-index: 102;
   messagingSenderId: "596350496353",
   appId: "1:596350496353:web:84c66c351700ddf0824420",
   measurementId: "G-3MGCDH4FRF"
-};
+}; 
 
   
       const app = initializeApp(firebaseConfig);
       const analytics = getAnalytics(app);
       const auth = getAuth(app);
     const db = getFirestore(app);
-//const schoolId= "alhidayah";
+const schoolId= "almadeenah";
   const terms = ["first term", "second term", "third term"];
   
    var sessions = [];
@@ -437,7 +410,9 @@ signout1.innerHTML = schoolName.toUpperCase();
     sess.innerHTML = sessions[0].year + ", " +terms[sessions[0].term]
         }
   
- 
+  let teachersDoc = await getDoc(doc(db, schoolId, "teachers"));
+    
+
 
 const adminFunctions = [
     "teachers",
@@ -454,19 +429,16 @@ const adminFunctions = [
   "feesSet",
   "feesRecord",
   "feesView",
-  "feesDefaulter"
+  "feesDefaulter",
+    "application",
+    "admission"
   ];
-    
-    
+  
 adminFunctions.forEach(fx=>{
   let elm = document.querySelector("."+fx);
   if (elm) elm.style = "display: none;"
   
 })
-    
-  let teachersDoc = await getDoc(doc(db, schoolId, "teachers"));
-    
-
   let d = new Date();
   let year = d.getFullYear();
   let month = d.getMonth() + 1;
