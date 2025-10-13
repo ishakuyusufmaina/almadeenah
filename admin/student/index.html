@@ -313,6 +313,7 @@
       let students = [];
       studentDocs.forEach((doc)=> {
         students.push(doc.data())
+        console.log(doc.id);
       });
       if (students.length){
       console.log("there is student");
@@ -356,8 +357,10 @@
       </div>
     `;
     resultElm.onclick = e=>{
-      localStorage.setItem("student", JSON.stringify(student));
-      window.location.href = "std-specific.html";
+      let strStd = JSON.stringify(student);
+      console.log(strStd); 
+      localStorage.setItem("student", strStd);
+      window.location.href = "class.html";
     }
     container.appendChild(resultElm);
   });
