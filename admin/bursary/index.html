@@ -241,7 +241,7 @@
 
     <button class="button" id="searchBtn">Search <span class="spinner"></span></button>
 
-    <a href="../../admin/student/registration.html" class="link-button">Register New Student</a>
+   
 
     <div class="results" id="resultsBox">
       <h3>Search Results</h3>
@@ -297,7 +297,7 @@ const terms = ["first term", "second term", "third term"];
     sessionSelect.value = sessionKey(session);
     sessionSelect.onchange = _=>{
       let i = _.target.selectedIndex;
-      console.log(i);
+      //console.log(i);
       if (i) {
         session = sessions[i-1];
         
@@ -341,10 +341,10 @@ const terms = ["first term", "second term", "third term"];
         alert("Please select a session and term");
         return;
       }
-      console.log(sess);
+     // console.log(sess);
       let sessRef = doc(db, schoolId, sess.replace("_", ""));
       let sessDoc = await getDoc(sessRef);
-      console.log(JSON.stringify(sessDoc.data()));
+    //  console.log(JSON.stringify(sessDoc.data()));
       let fees = sessDoc.data()?.fees;
       if (!fees) {
         alert("Fees not fixed");
@@ -353,7 +353,7 @@ const terms = ["first term", "second term", "third term"];
       const queryType = select.value;
       const queryValue = input.value.trim().toLowerCase();
       
-      console.log(queryValue);
+  //    console.log(queryValue);
 
       if (!queryValue) {
         resultsBox.style.display = "none";
@@ -374,11 +374,11 @@ const terms = ["first term", "second term", "third term"];
 
         })
         newArr = newArr.reverse();
-        console.log(newArr);
+        //.log(newArr);
         q = query(collection(db, schoolId, "db", "students"), where("names", "array-contains-any", ...newArr));
       } else {
-        console.log(queryType);
-        console.log(queryValue);
+       // console.log(queryType);
+       // console.log(queryValue);
         q = query(collection(db, schoolId, "db", "students"), where(queryType, "==", queryValue));
 
       }
@@ -389,9 +389,12 @@ const terms = ["first term", "second term", "third term"];
       
       studentDocs.forEach(async (doc)=> {
         let student = doc.data();
-        console.log(JSON.stringify(student));
+       // console.log(JSON.stringify(student));
       
         student.classes??=[student.class];
+        if (student.classes.length==2){
+          console.log(student.name);
+        }
         student.classes.forEach( async cls=>{
         let sectStd = {};
           for (const key in student){
@@ -399,7 +402,7 @@ const terms = ["first term", "second term", "third term"];
           }
           sectStd.class = cls;
           
-          console.log(sectStd.class);
+         // console.log(sectStd.class);
         let q = getQuery({
           id: sectStd.id, 
          "class": sectStd.class,
@@ -417,14 +420,14 @@ const terms = ["first term", "second term", "third term"];
        }
         let amount = snapshot.data().totalPaid;
         sectStd.amountPaid = amount;
-        console.log(amount);
+        //console.log(amount);
         students.push(sectStd)
         presentResult();
         })
       });
      
       function presentResult(){
-        console.log("there is student");
+       // console.log("there is student");
        populateResults(students, fees);
         resultsBox.style.display = "block";
 
@@ -452,17 +455,19 @@ const terms = ["first term", "second term", "third term"];
   container.innerHTML = ""; // Clear previous results
 
   students.forEach(student => {
-    console.log(typeof student.names);
+    
+   // console.log(typeof student.names);
+    
     const resultElm = document.createElement("div");
     resultElm.className = "resultElm";
     let stdSect = classSection.get(student.class);
-    console.log(student.class);
-    console.log(stdSect);
+   // console.log(student.class);
+   // console.log(stdSect);
     let dueFee = Number(fees[stdSect]);
     //let stdFees = student.schoolFees?? {};
     
     let amountPaid = Number(student.amountPaid);
-    console.log(dueFee);
+   // console.log(dueFee);
     let outstanding = dueFee - amountPaid; 
     resultElm.innerHTML = `
       <img src="${student.picURL}" alt="Picture of ${student.name}" class="studentPic">
@@ -494,10 +499,10 @@ const terms = ["first term", "second term", "third term"];
   
   
   function getQuery(sfCoord){
-    console.log(JSON.stringify(sfCoord));
+   // console.log(JSON.stringify(sfCoord));
     let ref = collection(db, schoolId, "db", "fees");
-    console.log(sfCoord.term);
-    console.log(sfCoord.class);
+   // console.log(sfCoord.term);
+    //console.log(sfCoord.class);
     return query(ref, 
     where("student", "==", sfCoord.id),
     where("class", "==", sfCoord.class), 
