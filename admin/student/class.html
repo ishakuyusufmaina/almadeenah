@@ -179,6 +179,8 @@
         <th>ID</th>
         <th>Name</th>
         <th>Gender</th>
+        <th>Class</th>
+        <th>DOB</th>
       </tr>
     </thead>
     <tbody id="table"></tbody>
@@ -223,8 +225,15 @@
   let sessionsRef = doc(db, schoolId, "sessions");
   //let studentsRef = doc(db, schoolId, "classes");
   const sessionsDoc = await getDoc(sessionsRef);
+  const sections = (await getDoc(doc(db, schoolId, "section"))).data();
+  console.log(sections);
   var sessionIndex;
-    
+  var classes = [];
+  for (const sectId in sections){
+    let section = sections[sectId];
+    classes = classes.concat(section.classes);
+    console.log(section);
+  }
   if (sessionsDoc.exists()){
       
      let sessions = sessionsDoc.data().sessions      
@@ -247,11 +256,8 @@
  const std = JSON.parse(localStorage.getItem("student"));
   addRow(std);
 console.log("student: ", JSON.stringify(std));
-    let classes = [];
-  /*for (const sectId in sections){
-    let section = sections[sectId];
-    classes = classes.concat(section.classes);
-  }*/
+  
+
   //let clas = classes.filter(c=>c.toLowerCase().trim()==cls)[0];
   
 
@@ -293,11 +299,42 @@ console.log("student: ", JSON.stringify(std));
            <option value="male">Male</option>
         </select>
       </td>    
-     <td>
-         ${result.class??result.classes.toString().replaceAll(",", ", ").toUpperCase()}
+     <td class="classes">
+         <select multiple></select>
       </td>    
     
+    
+     <td class="dob">
+        <input type="date" value="${result.dob}">
+      </td>   
+    
       `;
+    
+    let cell = row.querySelector(".classes");
+    let dobIn = row.querySelector(".dob>input");
+    dobIn.onchange = e=>{
+      result.dob = dobIn.value;
+    }
+
+    result.classes??=[result.class];
+    let select = cell.querySelector("select");
+    result.classes.forEach(cls=>{
+      let opt = new Option(cls.toUpperCase());
+      opt.value = cls;
+      opt.selected = true;
+      select.append(opt);
+      
+    });
+    classes.forEach(cls=>{
+      if (result.classes.includes(cls)) return;
+      let opt = new Option(cls.toUpperCase());
+      opt.value = cls;
+      select.append(opt);
+    })
+    select.onchange = e=>{
+     
+      result.classes = Array.from(select.selectedOptions).map(opt=>opt.value);
+    }
      row.querySelector(".id").ondblclick = async e=>{
        if (!result.id) return;
        if (window.confirm("Are you sure you want to delete this student?")){
