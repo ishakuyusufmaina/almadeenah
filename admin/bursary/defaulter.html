@@ -51,7 +51,7 @@ const app = initializeApp(firebaseConfig);
 
       // Query fees by class
       console.log(className.toLowerCase());
-      const feesSnap = await getDocs(query(collection(db, schoolId, "db", "fees"), where("class", "==", className.toLowerCase())));
+      const feesSnap = await getDocs(query(collection(db, schoolId, "db", "fees"), where("class", "==", className)));
       const fees = {};
       feesSnap.forEach(doc => {
         const data = doc.data();
